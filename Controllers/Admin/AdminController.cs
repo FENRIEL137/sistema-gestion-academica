@@ -409,6 +409,31 @@ namespace SistemaGestionAcademica.Controllers.Admin
             return View(aula);
         }
 
+        // GET: /Admin/EditarAula/5
+        public async Task<IActionResult> EditarAula(int id)
+        {
+            var aula = await _unitOfWork.Aulas.GetByIdAsync(id);
+            if (aula == null) return NotFound();
+            return View(aula);
+        }
+
+        // POST: /Admin/EditarAula/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarAula(int id, AulaEntity aula)
+        {
+            if (id != aula.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                await _unitOfWork.Aulas.UpdateAsync(aula);
+                await _unitOfWork.CompleteAsync();
+                TempData["SuccessMessage"] = "Aula actualizada exitosamente.";
+                return RedirectToAction(nameof(Aulas));
+            }
+            return View(aula);
+        }
+
         // ============ CONFIGURACIÓN INSTITUCIONAL ============
 
         // GET: /Admin/Configuracion

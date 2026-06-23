@@ -9,6 +9,7 @@
     <a asp-action="CrearAula" class="btn btn-primary">
         <i class="bi bi-plus-lg"></i> Nueva Aula
     </a>
+
 </div>
 
 <div class="row">
@@ -16,6 +17,11 @@
     {
         foreach (var aula in Model)
         {
+            <div class="card-footer">
+                <a asp-action="EditarAula" asp-route-id="@aula.Id" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+            </div>
             <div class="col-md-4 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
