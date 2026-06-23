@@ -47,6 +47,22 @@ namespace SistemaGestionAcademica.Controllers
 
             if (!ModelState.IsValid)
                 return View(model);
+
+            // =============================================
+            // FORZAR CREACION DE ROLES Y ADMIN
+            // =============================================
+            if (!await _roleManager.RoleExistsAsync("Administrador"))
+                await _roleManager.CreateAsync(new ApplicationRole("Administrador"));
+
+            if (!await _roleManager.RoleExistsAsync("Empleado"))
+                await _roleManager.CreateAsync(new ApplicationRole("Empleado"));
+
+            if (!await _roleManager.RoleExistsAsync("Profesor"))
+                await _roleManager.CreateAsync(new ApplicationRole("Profesor"));
+
+            if (!await _roleManager.RoleExistsAsync("Estudiante"))
+                await _roleManager.CreateAsync(new ApplicationRole("Estudiante"));
+
             var adminUser = await _userManager.FindByEmailAsync("admin@sistema.edu");
             if (adminUser == null)
             {
@@ -54,73 +70,48 @@ namespace SistemaGestionAcademica.Controllers
                 {
                     UserName = "admin@sistema.edu",
                     Email = "admin@sistema.edu",
-                    NombreCompleto = "Administrador",
+                    NombreCompleto = "Administrador del Sistema",
                     EmailConfirmed = true,
                     Activo = true,
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
-
-                var createResult = await _userManager.CreateAsync(adminUser, "Admin123!");
-                if (createResult.Succeeded)
-                {
-                    if (!await _roleManager.RoleExistsAsync("Administrador"))
-                        await _roleManager.CreateAsync(new ApplicationRole("Administrador"));
-
-                    await _userManager.AddToRoleAsync(adminUser, "Administrador");
-                }
+                await _userManager.CreateAsync(adminUser, "Admin123!");
             }
+
+            if (!await _userManager.IsInRoleAsync(adminUser, "Administrador"))
+                await _userManager.AddToRoleAsync(adminUser, "Administrador");
+            // =============================================
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Correo electrónico o contraseña incorrectos.");
-                return View(model);
-            }
-
-            if (!user.Activo)
-            {
-                ModelState.AddModelError(string.Empty, "Su cuenta ha sido desactivada. Contacte al administrador.");
+                ModelState.AddModelError(string.Empty, "Correo o contrasena incorrectos.");
                 return View(model);
             }
 
             var result = await _signInManager.PasswordSignInAsync(
-                user.UserName!,
-                model.Password,
-                model.RememberMe,
-                lockoutOnFailure: false);
+                user.UserName!, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-            // Busca esta parte en el método Login (después de PasswordSignInAsync)
             if (result.Succeeded)
             {
-                _logger.LogInformation($"Usuario {user.Email} inicio sesion. Rol: {string.Join(", ", await _userManager.GetRolesAsync(user))}");
-
                 user.UltimoAcceso = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
-                // Redirigir según el rol - USA Dashboard, NO Index
+                _logger.LogInformation($"LOGIN OK: {user.Email} - Roles: {string.Join(", ", await _userManager.GetRolesAsync(user))}");
+
                 if (await _userManager.IsInRoleAsync(user, "Administrador"))
                     return Redirect("/Admin/Admin/Dashboard");
-
                 if (await _userManager.IsInRoleAsync(user, "Empleado"))
                     return Redirect("/Empleado/Empleado/Dashboard");
-
                 if (await _userManager.IsInRoleAsync(user, "Profesor"))
                     return Redirect("/Profesor/Profesor/Dashboard");
-
                 if (await _userManager.IsInRoleAsync(user, "Estudiante"))
                     return Redirect("/Estudiante/Estudiante/Dashboard");
 
-                return Redirect("/Admin/Admin/Dashboard");
+                return Redirect("/Home/Index");
             }
 
-            if (result.IsLockedOut)
-            {
-                _logger.LogWarning($"Cuenta bloqueada para usuario {user.Email}");
-                ModelState.AddModelError(string.Empty, "Su cuenta ha sido bloqueada temporalmente. Intente más tarde.");
-                return View(model);
-            }
-
-            ModelState.AddModelError(string.Empty, "Correo electrónico o contraseña incorrectos.");
+            ModelState.AddModelError(string.Empty, "Correo o contrasena incorrectos.");
             return View(model);
         }
 
