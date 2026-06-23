@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pXSj+1jnXF4=",
+  "dgSpecHash": "2gWrqmnqtXk=",
   "success": true,
   "projectFilePath": "C:\\Users\\Windows 10\\Desktop\\GABRIEL\\vs code\\desarrollo de sistemas\\SistemaGestionAcademica\\SistemaGestionAcademica\\SistemaGestionAcademica.csproj",
   "expectedPackageFiles": [
@@ -65,6 +65,8 @@
     "C:\\Users\\Windows 10\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\Windows 10\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\Windows 10\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
+    "C:\\Users\\Windows 10\\.nuget\\packages\\npgsql\\9.0.0\\npgsql.9.0.0.nupkg.sha512",
+    "C:\\Users\\Windows 10\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\9.0.0\\npgsql.entityframeworkcore.postgresql.9.0.0.nupkg.sha512",
     "C:\\Users\\Windows 10\\.nuget\\packages\\rbush\\4.0.0\\rbush.4.0.0.nupkg.sha512",
     "C:\\Users\\Windows 10\\.nuget\\packages\\sixlabors.fonts\\1.0.0\\sixlabors.fonts.1.0.0.nupkg.sha512",
     "C:\\Users\\Windows 10\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.10\\sqlitepclraw.bundle_e_sqlite3.2.1.10.nupkg.sha512",

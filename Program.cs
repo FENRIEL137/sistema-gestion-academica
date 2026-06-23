@@ -7,6 +7,7 @@ using SistemaGestionAcademica.Repositories;
 using SistemaGestionAcademica.Services;
 using SistemaGestionAcademica.Services.Interfaces;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
@@ -15,21 +16,49 @@ builder.WebHost.UseUrls($"http://*:{port}");
 builder.Services.AddControllersWithViews();
 
 // =============================================
-// SQLite - FUNCIONA EN RENDER SIN CONFIGURACION
+// BASE DE DATOS - POSTGRESQL PARA RENDER
 // =============================================
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? "Host=localhost;Database=siga;Username=postgres;Password=postgres";
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite("Data Source=siga.db"));
+{
+    if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://"))
+    {
+        // Convertir URL de Render a formato de conexion
+        var uri = new Uri(connectionString);
+        var userInfo = uri.UserInfo.Split(':');
+        var host = uri.Host;
+        var portDb = uri.Port > 0 ? uri.Port : 5432;
+        var database = uri.AbsolutePath.TrimStart('/');
+        var username = userInfo[0];
+        var password = userInfo.Length > 1 ? userInfo[1] : "";
+
+        var npgsqlConnString = $"Host={host};Port={portDb};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true;Include Error Detail=true";
+
+        options.UseNpgsql(npgsqlConnString);
+    }
+    else if (connectionString.Contains("Data Source=") || connectionString.Contains(".db"))
+    {
+        // SQLite (desarrollo local alternativo)
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        // SQL Server (desarrollo local)
+        options.UseSqlServer(connectionString);
+    }
+});
 
 // Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
-    options.Password.RequiredLength = 8;
-    options.Password.RequireDigit = true;
-    options.Password.RequireLowercase = true;
-    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-    options.Lockout.MaxFailedAccessAttempts = 5;
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedAccount = false;
 })
@@ -91,14 +120,26 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Crear BD y datos iniciales
+// Crear tablas y datos iniciales
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
+    var logger = services.GetRequiredService<ILogger<Program>>();
 
-    await context.Database.EnsureCreatedAsync();
-    await DataInitializer.InitializeAsync(services);
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        logger.LogInformation("Creando base de datos...");
+        await context.Database.EnsureCreatedAsync();
+        logger.LogInformation("Base de datos lista.");
+
+        await DataInitializer.InitializeAsync(services);
+        logger.LogInformation("Datos iniciales insertados.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Error al inicializar: " + ex.Message);
+    }
 }
 
 app.Run();
