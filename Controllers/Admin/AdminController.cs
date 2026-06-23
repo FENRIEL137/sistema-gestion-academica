@@ -120,7 +120,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Profesores/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EditarProfesor(int id, ProfesorEntity profesor)
         {
             if (id != profesor.Id) return NotFound();
