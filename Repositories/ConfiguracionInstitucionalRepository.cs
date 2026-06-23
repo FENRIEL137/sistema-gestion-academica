@@ -20,7 +20,7 @@ namespace SistemaGestionAcademica.Repositories
         public async Task ActualizarConfiguracionAsync(ConfiguracionInstitucional configuracion, string usuarioId)
         {
             configuracion.ActualizadoPorId = usuarioId;
-            configuracion.FechaUltimaActualizacion = DateTime.Now;
+            configuracion.FechaUltimaActualizacion = DateTime.UtcNow;
             _dbSet.Update(configuracion);
             await _context.SaveChangesAsync();
         }
