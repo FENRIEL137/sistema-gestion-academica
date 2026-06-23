@@ -10,21 +10,25 @@ using SistemaGestionAcademica.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // =============================================
-// 1. SERVICIOS MVC
+// CONFIGURACION DE PUERTO PARA RENDER
+// =============================================
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+builder.WebHost.UseUrls($"http://*:{port}");
+
+// =============================================
+// SERVICIOS MVC
 // =============================================
 builder.Services.AddControllersWithViews();
 
 // =============================================
-// 2. BASE DE DATOS
+// BASE DE DATOS
 // =============================================
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOptions => sqlOptions.MigrationsAssembly("SistemaGestionAcademica")
-    ));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // =============================================
-// 3. IDENTITY
+// IDENTITY
 // =============================================
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
@@ -35,7 +39,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
     options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.AllowedForNewUsers = true;
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedAccount = false;
 })
@@ -43,7 +46,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddDefaultTokenProviders();
 
 // =============================================
-// 4. COOKIES
+// COOKIES
 // =============================================
 builder.Services.ConfigureApplicationCookie(options =>
 {
@@ -55,7 +58,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // =============================================
-// 5. REPOSITORIOS
+// REPOSITORIOS
 // =============================================
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEstudianteRepository, EstudianteRepository>();
@@ -71,12 +74,12 @@ builder.Services.AddScoped<INotaRepository, NotaRepository>();
 builder.Services.AddScoped<IConfiguracionInstitucionalRepository, ConfiguracionInstitucionalRepository>();
 
 // =============================================
-// 6. UNIT OF WORK
+// UNIT OF WORK
 // =============================================
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // =============================================
-// 7. SERVICIOS (¡IMPORTANTE - TODOS DEBEN ESTAR!)
+// SERVICIOS
 // =============================================
 builder.Services.AddScoped<IEstudianteService, EstudianteService>();
 builder.Services.AddScoped<IProfesorService, ProfesorService>();
@@ -87,7 +90,7 @@ builder.Services.AddScoped<IInscripcionService, InscripcionService>();
 builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 
 // =============================================
-// 8. SESIONES
+// SESIONES
 // =============================================
 builder.Services.AddSession(options =>
 {
@@ -96,13 +99,10 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
-// =============================================
-// 9. CONSTRUIR LA APP
-// =============================================
 var app = builder.Build();
 
 // =============================================
-// 10. PIPELINE
+// PIPELINE
 // =============================================
 if (!app.Environment.IsDevelopment())
 {
@@ -119,7 +119,7 @@ app.UseAuthorization();
 app.UseSession();
 
 // =============================================
-// 11. RUTAS
+// RUTAS
 // =============================================
 app.MapControllerRoute(
     name: "areas",
@@ -130,19 +130,21 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // =============================================
-// 12. INICIALIZAR DATOS
+// INICIALIZAR BASE DE DATOS Y ROLES
 // =============================================
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate(); // Aplica migraciones automaticamente
         await DataInitializer.InitializeAsync(services);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Error al inicializar la base de datos y los roles.");
+        logger.LogError(ex, "Error al inicializar la base de datos.");
     }
 }
 

@@ -298,3 +298,6 @@ C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestio
 C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestionAcademica\SistemaGestionAcademica\obj\Debug\net10.0\SistemaGestionAcademica.pdb
 C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestionAcademica\SistemaGestionAcademica\obj\Debug\net10.0\SistemaGestionAcademica.genruntimeconfig.cache
 C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestionAcademica\SistemaGestionAcademica\obj\Debug\net10.0\ref\SistemaGestionAcademica.dll
+C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestionAcademica\SistemaGestionAcademica\obj\Debug\net10.0\SistemaGestionAcademica.sourcelink.json
+C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestionAcademica\SistemaGestionAcademica\bin\Debug\net10.0\Npgsql.dll
+C:\Users\Windows 10\Desktop\GABRIEL\vs code\desarrollo de sistemas\SistemaGestionAcademica\SistemaGestionAcademica\bin\Debug\net10.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
