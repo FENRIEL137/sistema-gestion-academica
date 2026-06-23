@@ -43,7 +43,7 @@ namespace SistemaGestionAcademica.Models.Entities
         public string? PeriodoActual { get; set; } = "2026-I";
 
         [Display(Name = "Fecha de Última Actualización")]
-        public DateTime FechaUltimaActualizacion { get; set; } = DateTime.Now;
+        public DateTime FechaUltimaActualizacion { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Actualizado Por")]
         public string? ActualizadoPorId { get; set; }

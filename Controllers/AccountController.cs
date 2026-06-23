@@ -71,7 +71,7 @@ namespace SistemaGestionAcademica.Controllers
             // Busca esta parte en el método Login (después de PasswordSignInAsync)
             if (result.Succeeded)
             {
-                user.UltimoAcceso = DateTime.Now;
+                user.UltimoAcceso = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
                 // Redirigir según el rol - USA Dashboard, NO Index
@@ -140,7 +140,7 @@ namespace SistemaGestionAcademica.Controllers
                 Email = model.Correo,
                 NombreCompleto = $"{model.Nombre} {model.Apellido}",
                 EmailConfirmed = true,
-                FechaRegistro = DateTime.Now,
+                FechaRegistro = DateTime.UtcNow,
                 Activo = true
             };
 
@@ -162,7 +162,7 @@ namespace SistemaGestionAcademica.Controllers
                     CI = model.CI,
                     Telefono = model.Telefono,
                     Correo = model.Correo,
-                    FechaInscripcion = DateTime.Now,
+                    FechaInscripcion = DateTime.UtcNow,
                     Activo = true,
                     UserId = user.Id
                 };

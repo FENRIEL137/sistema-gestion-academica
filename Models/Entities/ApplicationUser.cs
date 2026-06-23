@@ -11,7 +11,7 @@ namespace SistemaGestionAcademica.Models.Entities
         public string NombreCompleto { get; set; } = string.Empty;
 
         [Display(Name = "Fecha de Registro")]
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
+        public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Activo")]
         public bool Activo { get; set; } = true;
