@@ -33,7 +33,7 @@ namespace SistemaGestionAcademica.Models.Entities
         public string? Observaciones { get; set; }
 
         [Display(Name = "Fecha de Registro")]
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
+        public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Modificado Por")]
         public string? ModificadoPorId { get; set; }

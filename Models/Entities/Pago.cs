@@ -28,7 +28,7 @@ namespace SistemaGestionAcademica.Models.Entities
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Fecha de Pago")]
-        public DateTime FechaPago { get; set; } = DateTime.Now;
+        public DateTime FechaPago { get; set; } = DateTime.UtcNow;
 
         [Required]
         [Display(Name = "Tipo de Pago")]

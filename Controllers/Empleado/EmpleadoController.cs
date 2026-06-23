@@ -67,7 +67,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
                     Email = email,
                     NombreCompleto = $"{estudiante.Nombre} {estudiante.Apellido}",
                     EmailConfirmed = true,
-                    FechaRegistro = DateTime.Now,
+                    FechaRegistro = DateTime.UtcNow,
                     Activo = true
                 };
 
@@ -76,7 +76,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
                 {
                     await _userManager.AddToRoleAsync(user, "Estudiante");
                     estudiante.UserId = user.Id;
-                    estudiante.FechaInscripcion = DateTime.Now;
+                    estudiante.FechaInscripcion = DateTime.UtcNow;
                     estudiante.Activo = true;
 
                     await _unitOfWork.Estudiantes.AddAsync(estudiante);
@@ -148,14 +148,14 @@ namespace SistemaGestionAcademica.Controllers.Empleado
             if (estudiante == null) return NotFound();
 
             estudiante.Activo = false;
-            estudiante.FechaBaja = DateTime.Now;
+            estudiante.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Estudiantes.UpdateAsync(estudiante);
 
             var inscripciones = await _unitOfWork.Estudiantes.GetInscripcionesEstudianteAsync(id);
             foreach (var inscripcion in inscripciones.Where(i => i.Estado == EstadoInscripcion.Activa))
             {
                 inscripcion.Estado = EstadoInscripcion.BajaDefinitiva;
-                inscripcion.FechaBaja = DateTime.Now;
+                inscripcion.FechaBaja = DateTime.UtcNow;
                 await _unitOfWork.Inscripciones.UpdateAsync(inscripcion);
             }
 
@@ -209,7 +209,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
                     InscripcionId = inscripcionId,
                     EstudianteId = inscripcion.EstudianteId,
                     Monto = monto,
-                    FechaPago = DateTime.Now,
+                    FechaPago = DateTime.UtcNow,
                     Tipo = TipoPago.Materia,
                     Concepto = concepto ?? "Pago de materia",
                     RegistradoPorId = userId,
@@ -245,7 +245,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
             var inscripcionesPendientes = await _unitOfWork.Inscripciones.GetInscripcionesPendientesPagoAsync();
 
             var config = await _unitOfWork.Configuraciones.GetConfiguracionActualAsync();
-            var hoy = DateTime.Now;
+            var hoy = DateTime.UtcNow;
             var inicioPeriodo = new DateTime(hoy.Year, hoy.Month, config?.DiaInicioPagos ?? 23);
             var finPeriodo = new DateTime(hoy.Year, hoy.Month, config?.DiaFinPagos ?? 30);
 
@@ -265,7 +265,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
             {
                 EstudianteId = estudianteId,
                 MateriaId = materiaId,
-                FechaInscripcion = DateTime.Now,
+                FechaInscripcion = DateTime.UtcNow,
                 Estado = EstadoInscripcion.Activa,
                 PagoRealizado = false
             };
@@ -286,7 +286,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
             if (inscripcion == null) return NotFound();
 
             inscripcion.Estado = EstadoInscripcion.BajaTemporal;
-            inscripcion.FechaBaja = DateTime.Now;
+            inscripcion.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Inscripciones.UpdateAsync(inscripcion);
             await _unitOfWork.CompleteAsync();
 

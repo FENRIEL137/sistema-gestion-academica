@@ -85,7 +85,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
                     Email = email,
                     NombreCompleto = $"{profesor.Nombre} {profesor.Apellido}",
                     EmailConfirmed = true,
-                    FechaRegistro = DateTime.Now,
+                    FechaRegistro = DateTime.UtcNow,
                     Activo = true
                 };
 
@@ -94,7 +94,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
                 {
                     await _userManager.AddToRoleAsync(user, "Profesor");
                     profesor.UserId = user.Id;
-                    profesor.FechaContratacion = DateTime.Now;
+                    profesor.FechaContratacion = DateTime.UtcNow;
                     profesor.Activo = true;
 
                     await _unitOfWork.Profesores.AddAsync(profesor);
@@ -154,7 +154,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
             if (profesor == null) return NotFound();
 
             profesor.Activo = false;
-            profesor.FechaBaja = DateTime.Now;
+            profesor.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Profesores.UpdateAsync(profesor);
             await _unitOfWork.CompleteAsync();
 
@@ -172,7 +172,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
             profesor.Activo = true;
             profesor.FechaBaja = null;
-            profesor.FechaContratacion = DateTime.Now;
+            profesor.FechaContratacion = DateTime.UtcNow;
             await _unitOfWork.Profesores.UpdateAsync(profesor);
             await _unitOfWork.CompleteAsync();
 
@@ -214,7 +214,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
                     Email = email,
                     NombreCompleto = $"{empleado.Nombre} {empleado.Apellido}",
                     EmailConfirmed = true,
-                    FechaRegistro = DateTime.Now,
+                    FechaRegistro = DateTime.UtcNow,
                     Activo = true
                 };
 
@@ -223,7 +223,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
                 {
                     await _userManager.AddToRoleAsync(user, "Empleado");
                     empleado.UserId = user.Id;
-                    empleado.FechaContratacion = DateTime.Now;
+                    empleado.FechaContratacion = DateTime.UtcNow;
                     empleado.Activo = true;
 
                     await _unitOfWork.Empleados.AddAsync(empleado);
@@ -283,7 +283,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
             if (empleado == null) return NotFound();
 
             empleado.Activo = false;
-            empleado.FechaBaja = DateTime.Now;
+            empleado.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Empleados.UpdateAsync(empleado);
             await _unitOfWork.CompleteAsync();
 

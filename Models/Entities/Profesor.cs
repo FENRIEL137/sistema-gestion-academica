@@ -43,7 +43,7 @@ namespace SistemaGestionAcademica.Models.Entities
 
         [Display(Name = "Fecha de Contratación")]
         [DataType(DataType.Date)]
-        public DateTime FechaContratacion { get; set; } = DateTime.Now;
+        public DateTime FechaContratacion { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Activo")]
         public bool Activo { get; set; } = true;

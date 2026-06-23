@@ -25,7 +25,7 @@ namespace SistemaGestionAcademica.Models.Entities
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Fecha de Inscripción")]
-        public DateTime FechaInscripcion { get; set; } = DateTime.Now;
+        public DateTime FechaInscripcion { get; set; } = DateTime.UtcNow;
 
         [Required]
         [Display(Name = "Estado")]

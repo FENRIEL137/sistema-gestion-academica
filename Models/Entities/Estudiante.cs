@@ -38,7 +38,7 @@ namespace SistemaGestionAcademica.Models.Entities
 
         [Display(Name = "Fecha de Inscripción")]
         [DataType(DataType.Date)]
-        public DateTime FechaInscripcion { get; set; } = DateTime.Now;
+        public DateTime FechaInscripcion { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Pago Inicial")]
         [Column(TypeName = "decimal(18,2)")]

@@ -20,7 +20,7 @@ namespace SistemaGestionAcademica.Models.Entities
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Fecha")]
-        public DateTime Fecha { get; set; } = DateTime.Now;
+        public DateTime Fecha { get; set; } = DateTime.UtcNow;
 
         [Required]
         [Display(Name = "Tipo de Actividad")]
@@ -40,7 +40,7 @@ namespace SistemaGestionAcademica.Models.Entities
         public virtual Materia Materia { get; set; } = null!;
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
         [Display(Name = "Activo")]
         public bool Activo { get; set; } = true;

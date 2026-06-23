@@ -13,6 +13,6 @@ namespace SistemaGestionAcademica.Models.Entities
         }
 
         public string? Descripcion { get; set; }
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     }
 }
