@@ -110,7 +110,7 @@ namespace SistemaGestionAcademica.Controllers
                 if (await _userManager.IsInRoleAsync(user, "Estudiante"))
                     return Redirect("/Estudiante/Estudiante/Dashboard");
 
-                return Redirect("/Home/Index");
+                return Redirect("/Admin/Admin/Dashboard");
             }
 
             if (result.IsLockedOut)
