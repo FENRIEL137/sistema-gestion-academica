@@ -1,0 +1,67 @@
+@model SistemaGestionAcademica.Models.ViewModels.NotaViewModel
+@{
+    ViewData["Title"] = "Registro de Notas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2><i class="bi bi-pencil-square"></i> @ViewData["Title"] - @Model.MateriaNombre</h2>
+<hr />
+
+@if (Model.Estudiantes.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>CI</th>
+                    <th>Estudiante</th>
+                    @foreach (var actividad in Model.ActividadesNombres)
+                    {
+                        <th class="text-center">@actividad</th>
+                    }
+                    <th class="text-center">Nota Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var estudiante in Model.Estudiantes)
+                {
+                    <tr>
+                        <td>@estudiante.EstudianteCI</td>
+                        <td>@estudiante.EstudianteNombre</td>
+                        @foreach (var nota in estudiante.Notas)
+                        {
+                            <td class="text-center">
+                                <form asp-action="RegistrarNota" method="post" class="d-flex justify-content-center">
+                                    <input type="hidden" name="InscripcionId" value="@estudiante.InscripcionId" />
+                                    <input type="hidden" name="ActividadId" value="@nota.Key" />
+                                    <input type="number" name="Calificacion" value="@nota.Value" 
+                                           class="form-control form-control-sm text-center" 
+                                           style="width: 70px;" min="0" max="100" step="0.1"
+                                           onchange="this.form.submit()" />
+                                </form>
+                            </td>
+                        }
+                        <td class="text-center">
+                            <strong>@(estudiante.NotaFinal?.ToString("F1") ?? "-")</strong>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No hay estudiantes inscritos en esta materia.
+    </div>
+}
+
+<div class="mt-3">
+    <a asp-action="Materias" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver
+    </a>
+    <a asp-action="ExportarExcel" asp-route-materiaId="@Model.MateriaId" class="btn btn-success">
+        <i class="bi bi-file-excel"></i> Exportar a Excel
+    </a>
+</div>

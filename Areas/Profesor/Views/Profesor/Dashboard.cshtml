@@ -1,0 +1,131 @@
+@model IEnumerable<SistemaGestionAcademica.Models.DTOs.MateriaDTO>
+@{
+    ViewData["Title"] = "Panel del Profesor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2"></i> @ViewData["Title"]</h2>
+        <p class="text-muted">Bienvenido, @User.Identity?.Name</p>
+        <hr />
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Mis Materias</h6>
+                        <h2>@(Model?.Count() ?? 0)</h2>
+                    </div>
+                    <i class="bi bi-book" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Total Estudiantes</h6>
+                        <h2>@(Model?.Sum(m => m.CuposDisponibles) ?? 0)</h2>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Actividades</h6>
+                        <h2>--</h2>
+                    </div>
+                    <i class="bi bi-list-check" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Periodo</h6>
+                        <h5>@DateTime.Now.Year</h5>
+                    </div>
+                    <i class="bi bi-calendar" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-book"></i> Mis Materias Asignadas</h5>
+                <span class="badge bg-light text-dark">@(Model?.Count() ?? 0) materias</span>
+            </div>
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="row">
+                        @foreach (var materia in Model)
+                        {
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-header bg-light">
+                                        <h6 class="card-title mb-0">@materia.Nombre</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text small text-muted">
+                                            @(string.IsNullOrEmpty(materia.Descripcion) ? "Sin descripcion" : materia.Descripcion)
+                                        </p>
+                                        <ul class="list-unstyled small">
+                                            <li><i class="bi bi-door-open"></i> <strong>Aula:</strong> @materia.Aula</li>
+                                            <li><i class="bi bi-clock"></i> <strong>Horario:</strong> @materia.Horario</li>
+                                            <li><i class="bi bi-people"></i> <strong>Cupos:</strong> @materia.CuposDisponibles</li>
+                                            <li><i class="bi bi-cash"></i> <strong>Costo:</strong> Bs. @materia.Costo.ToString("F2")</li>
+                                        </ul>
+                                    </div>
+                                    <div class="card-footer bg-white">
+                                        <div class="btn-group w-100">
+                                            <a asp-action="EstudiantesInscritos" asp-route-materiaId="@materia.Id" 
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-people"></i> Estudiantes
+                                            </a>
+                                            <a asp-action="Actividades" asp-route-materiaId="@materia.Id" 
+                                               class="btn btn-outline-info btn-sm">
+                                                <i class="bi bi-list-check"></i> Actividades
+                                            </a>
+                                            <a asp-action="Notas" asp-route-materiaId="@materia.Id" 
+                                               class="btn btn-outline-success btn-sm">
+                                                <i class="bi bi-pencil"></i> Notas
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-book" style="font-size: 3rem; color: #ccc;"></i>
+                        <h5 class="text-muted mt-2">No tienes materias asignadas</h5>
+                        <p class="text-muted">Contacta al administrador para que te asigne materias.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

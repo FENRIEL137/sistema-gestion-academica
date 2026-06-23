@@ -1,0 +1,96 @@
+@model IEnumerable<SistemaGestionAcademica.Models.Entities.Profesor>
+@{
+    ViewData["Title"] = "Gestion de Profesores";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person-workspace"></i> @ViewData["Title"]</h2>
+    <a asp-action="CrearProfesor" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nuevo Profesor
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>CI</th>
+                            <th>Especialidad</th>
+                            <th>Telefono</th>
+                            <th>Correo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var profesor in Model)
+                        {
+                            <tr>
+                                <td>@profesor.NombreCompleto</td>
+                                <td>@profesor.CI</td>
+                                <td>@profesor.Especialidad</td>
+                                <td>@(profesor.Telefono ?? "-")</td>
+                                <td>@(profesor.Correo ?? "-")</td>
+                                <td>
+                                    @if (profesor.Activo)
+                                    {
+                                        <span class="badge bg-success">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="EditarProfesor" asp-route-id="@profesor.Id" 
+                                           class="btn btn-outline-primary" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        @if (profesor.Activo)
+                                        {
+                                            <form asp-action="EliminarProfesor" asp-route-id="@profesor.Id" 
+                                                  method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-danger" 
+                                                        title="Dar de baja"
+                                                        onclick="return confirm('Esta seguro de dar de baja a este profesor?')">
+                                                    <i class="bi bi-person-x"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="ContratarProfesor" asp-route-id="@profesor.Id" 
+                                                  method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-success" 
+                                                        title="Reactivar">
+                                                    <i class="bi bi-person-check"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-people" style="font-size: 3rem; color: #ccc;"></i>
+                <h4 class="text-muted mt-3">No hay profesores registrados</h4>
+                <a asp-action="CrearProfesor" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-lg"></i> Crear Primer Profesor
+                </a>
+            </div>
+        }
+    </div>
+</div>

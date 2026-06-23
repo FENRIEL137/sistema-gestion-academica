@@ -1,0 +1,92 @@
+@model SistemaGestionAcademica.Models.Entities.Profesor
+@{
+    ViewData["Title"] = "Nuevo Profesor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="bi bi-person-plus"></i> @ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="CrearProfesor" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombre" class="form-label">Nombre</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre del profesor" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Apellido" class="form-label">Apellido</label>
+                            <input asp-for="Apellido" class="form-control" placeholder="Apellido del profesor" />
+                            <span asp-validation-for="Apellido" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CI" class="form-label">Cedula de Identidad</label>
+                        <input asp-for="CI" class="form-control" placeholder="Cedula de Identidad" />
+                        <span asp-validation-for="CI" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Especialidad" class="form-label">Especialidad</label>
+                        <input asp-for="Especialidad" class="form-control" placeholder="Especialidad del profesor" />
+                        <span asp-validation-for="Especialidad" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Telefono" class="form-label">Telefono</label>
+                            <input asp-for="Telefono" class="form-control" placeholder="Telefono" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Correo" class="form-label">Correo Electronico</label>
+                            <input asp-for="Correo" class="form-control" type="email" 
+                                   placeholder="correo@institucion.edu" />
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+                    <h5><i class="bi bi-shield-lock"></i> Credenciales de Acceso</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Correo Electronico (Usuario)</label>
+                            <input type="email" name="email" class="form-control" 
+                                   placeholder="usuario@correo.com" required />
+                            <small class="text-muted">Se usara para iniciar sesion</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">Contrasena</label>
+                            <input type="password" name="password" class="form-control" 
+                                   required minlength="8" placeholder="Minimo 8 caracteres" />
+                            <small class="text-muted">Minimo 8 caracteres, incluir mayusculas, minusculas y numeros</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Profesores" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Crear Profesor
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,379 @@
+@{
+    ViewData["Title"] = "Consultas Globales";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-search"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<ul class="nav nav-tabs mb-4" id="consultasTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="estudiantes-tab" data-bs-toggle="tab" 
+                data-bs-target="#estudiantes" type="button" role="tab">
+            <i class="bi bi-people"></i> Estudiantes
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="profesores-tab" data-bs-toggle="tab" 
+                data-bs-target="#profesores" type="button" role="tab">
+            <i class="bi bi-person-workspace"></i> Profesores
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="empleados-tab" data-bs-toggle="tab" 
+                data-bs-target="#empleados" type="button" role="tab">
+            <i class="bi bi-person-badge"></i> Empleados
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="materias-tab" data-bs-toggle="tab" 
+                data-bs-target="#materias" type="button" role="tab">
+            <i class="bi bi-book"></i> Materias
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="aulas-tab" data-bs-toggle="tab" 
+                data-bs-target="#aulas" type="button" role="tab">
+            <i class="bi bi-door-open"></i> Aulas
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="consultasTabsContent">
+    
+    @* Tab Estudiantes *@
+    <div class="tab-pane fade show active" id="estudiantes" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Todos los Estudiantes</h5>
+                @{
+                    var estudiantes = ViewBag.Estudiantes as IEnumerable<SistemaGestionAcademica.Models.Entities.Estudiante>;
+                    var totalEstudiantes = estudiantes?.Count() ?? 0;
+                }
+                <span class="badge bg-primary">@totalEstudiantes registros</span>
+            </div>
+            <div class="card-body">
+                @if (estudiantes != null && estudiantes.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre Completo</th>
+                                    <th>CI</th>
+                                    <th>Telefono</th>
+                                    <th>Correo</th>
+                                    <th>Fecha Inscripcion</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var est in estudiantes)
+                                {
+                                    <tr>
+                                        <td>@est.Id</td>
+                                        <td>@est.NombreCompleto</td>
+                                        <td>@est.CI</td>
+                                        <td>@(est.Telefono ?? "-")</td>
+                                        <td>@(est.Correo ?? "-")</td>
+                                        <td>@est.FechaInscripcion.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            @if (est.Activo)
+                                            {
+                                                <span class="badge bg-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay estudiantes registrados.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Tab Profesores *@
+    <div class="tab-pane fade" id="profesores" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Todos los Profesores</h5>
+                @{
+                    var profesores = ViewBag.Profesores as IEnumerable<SistemaGestionAcademica.Models.Entities.Profesor>;
+                    var totalProfesores = profesores?.Count() ?? 0;
+                }
+                <span class="badge bg-primary">@totalProfesores registros</span>
+            </div>
+            <div class="card-body">
+                @if (profesores != null && profesores.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre Completo</th>
+                                    <th>CI</th>
+                                    <th>Especialidad</th>
+                                    <th>Telefono</th>
+                                    <th>Correo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var prof in profesores)
+                                {
+                                    <tr>
+                                        <td>@prof.Id</td>
+                                        <td>@prof.NombreCompleto</td>
+                                        <td>@prof.CI</td>
+                                        <td>@prof.Especialidad</td>
+                                        <td>@(prof.Telefono ?? "-")</td>
+                                        <td>@(prof.Correo ?? "-")</td>
+                                        <td>
+                                            @if (prof.Activo)
+                                            {
+                                                <span class="badge bg-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay profesores registrados.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Tab Empleados *@
+    <div class="tab-pane fade" id="empleados" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Todos los Empleados</h5>
+                @{
+                    var empleados = ViewBag.Empleados as IEnumerable<SistemaGestionAcademica.Models.Entities.Empleado>;
+                    var totalEmpleados = empleados?.Count() ?? 0;
+                }
+                <span class="badge bg-primary">@totalEmpleados registros</span>
+            </div>
+            <div class="card-body">
+                @if (empleados != null && empleados.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre Completo</th>
+                                    <th>CI</th>
+                                    <th>Cargo</th>
+                                    <th>Telefono</th>
+                                    <th>Correo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var emp in empleados)
+                                {
+                                    <tr>
+                                        <td>@emp.Id</td>
+                                        <td>@emp.NombreCompleto</td>
+                                        <td>@emp.CI</td>
+                                        <td>@emp.Cargo</td>
+                                        <td>@(emp.Telefono ?? "-")</td>
+                                        <td>@(emp.Correo ?? "-")</td>
+                                        <td>
+                                            @if (emp.Activo)
+                                            {
+                                                <span class="badge bg-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay empleados registrados.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Tab Materias *@
+    <div class="tab-pane fade" id="materias" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Todas las Materias</h5>
+                @{
+                    var materias = ViewBag.Materias as IEnumerable<SistemaGestionAcademica.Models.Entities.Materia>;
+                    var totalMaterias = materias?.Count() ?? 0;
+                }
+                <span class="badge bg-primary">@totalMaterias registros</span>
+            </div>
+            <div class="card-body">
+                @if (materias != null && materias.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Profesor</th>
+                                    <th>Aula</th>
+                                    <th>Horario</th>
+                                    <th>Costo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var mat in materias)
+                                {
+                                    <tr>
+                                        <td>@mat.Id</td>
+                                        <td>@mat.Nombre</td>
+                                        <td>@(mat.Profesor?.NombreCompleto ?? "Sin asignar")</td>
+                                        <td>@(mat.Aula?.Nombre ?? "Sin asignar")</td>
+                                        <td>@(mat.Horario?.HorarioCompleto ?? "Sin asignar")</td>
+                                        <td>$@mat.Costo.ToString("F2")</td>
+                                        <td>
+                                            @if (mat.Activo)
+                                            {
+                                                <span class="badge bg-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay materias registradas.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Tab Aulas *@
+    <div class="tab-pane fade" id="aulas" role="tabpanel">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Todas las Aulas</h5>
+                @{
+                    var aulas = ViewBag.Aulas as IEnumerable<SistemaGestionAcademica.Models.Entities.Aula>;
+                    var totalAulas = aulas?.Count() ?? 0;
+                }
+                <span class="badge bg-primary">@totalAulas registros</span>
+            </div>
+            <div class="card-body">
+                @if (aulas != null && aulas.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Capacidad</th>
+                                    <th>Tipo</th>
+                                    <th>Ubicacion</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var aul in aulas)
+                                {
+                                    <tr>
+                                        <td>@aul.Id</td>
+                                        <td>@aul.Codigo</td>
+                                        <td>@aul.Nombre</td>
+                                        <td>@aul.Capacidad</td>
+                                        <td>
+                                            @if (aul.EsLaboratorio)
+                                            {
+                                                <span class="badge bg-info">Laboratorio</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Normal</span>
+                                            }
+                                        </td>
+                                        <td>@(aul.Ubicacion ?? "-")</td>
+                                        <td>
+                                            @if (aul.Activo)
+                                            {
+                                                <span class="badge bg-success">Activo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactivo</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay aulas registradas.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var hash = window.location.hash;
+        if (hash) {
+            var tab = document.querySelector('button[data-bs-target="' + hash + '"]');
+            if (tab) {
+                new bootstrap.Tab(tab).show();
+            }
+        }
+        
+        document.querySelectorAll('#consultasTabs button[data-bs-toggle="tab"]').forEach(function(tab) {
+            tab.addEventListener('shown.bs.tab', function(e) {
+                window.location.hash = e.target.getAttribute('data-bs-target');
+            });
+        });
+    </script>
+}

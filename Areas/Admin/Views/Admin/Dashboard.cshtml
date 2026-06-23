@@ -1,0 +1,134 @@
+@{
+    ViewData["Title"] = "Panel de Administracion";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Estudiantes</h6>
+                        <h2>@ViewBag.TotalEstudiantes</h2>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Profesores</h6>
+                        <h2>@ViewBag.TotalProfesores</h2>
+                    </div>
+                    <i class="bi bi-person-workspace" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Empleados</h6>
+                        <h2>@ViewBag.TotalEmpleados</h2>
+                    </div>
+                    <i class="bi bi-person-badge" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Materias</h6>
+                        <h2>@ViewBag.TotalMaterias</h2>
+                    </div>
+                    <i class="bi bi-book" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Accesos Rapidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a asp-action="Profesores" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-workspace"></i> Gestionar Profesores
+                    </a>
+                    <a asp-action="Empleados" class="list-group-item list-group-item-action">
+                        <i class="bi bi-person-badge"></i> Gestionar Empleados
+                    </a>
+                    <a asp-action="Materias" class="list-group-item list-group-item-action">
+                        <i class="bi bi-book"></i> Gestionar Materias
+                    </a>
+                    <a asp-action="Aulas" class="list-group-item list-group-item-action">
+                        <i class="bi bi-door-open"></i> Gestionar Aulas
+                    </a>
+                    <a asp-action="Configuracion" class="list-group-item list-group-item-action">
+                        <i class="bi bi-gear"></i> Configuracion Institucional
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Estudiantes con Deudas</h5>
+            </div>
+            <div class="card-body">
+                @{
+                    var estudiantesConDeuda = ViewBag.EstudiantesConDeuda 
+                        as IEnumerable<SistemaGestionAcademica.Models.Entities.Estudiante>;
+                }
+                @if (estudiantesConDeuda != null && estudiantesConDeuda.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>CI</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var estudiante in estudiantesConDeuda)
+                                {
+                                    <tr>
+                                        <td>@estudiante.NombreCompleto</td>
+                                        <td>@estudiante.CI</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No hay estudiantes con deudas pendientes.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

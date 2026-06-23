@@ -1,0 +1,58 @@
+@model IEnumerable<SistemaGestionAcademica.Models.DTOs.MateriaDTO>
+@{
+    ViewData["Title"] = "Mis Materias";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2><i class="bi bi-book"></i> @ViewData["Title"]</h2>
+<hr />
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var materia in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title">@materia.Nombre</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>@materia.Descripcion</p>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-door-open"></i> <strong>Aula:</strong> @materia.Aula</li>
+                            <li><i class="bi bi-clock"></i> <strong>Horario:</strong> @materia.Horario</li>
+                            <li><i class="bi bi-people"></i> <strong>Cupos:</strong> @materia.CuposDisponibles</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100">
+                            <a asp-action="EstudiantesInscritos" asp-route-materiaId="@materia.Id" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-people"></i> Estudiantes
+                            </a>
+                            <a asp-action="Actividades" asp-route-materiaId="@materia.Id" 
+                               class="btn btn-outline-info btn-sm">
+                                <i class="bi bi-list-check"></i> Actividades
+                            </a>
+                            <a asp-action="Notas" asp-route-materiaId="@materia.Id" 
+                               class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-pencil"></i> Notas
+                            </a>
+                            <a asp-action="ExportarExcel" asp-route-materiaId="@materia.Id" 
+                               class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-file-excel"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No tiene materias asignadas actualmente.
+    </div>
+}

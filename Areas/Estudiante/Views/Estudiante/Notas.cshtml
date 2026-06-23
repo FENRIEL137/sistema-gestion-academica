@@ -1,0 +1,150 @@
+@model IEnumerable<SistemaGestionAcademica.Models.DTOs.NotaDTO>
+@{
+    ViewData["Title"] = "Mis Notas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-bar-chart-fill"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    var notasPorMateria = Model.GroupBy(n => n.MateriaNombre);
+
+    foreach (var grupo in notasPorMateria)
+    {
+        var promedio = grupo.Sum(n => n.Ponderacion);
+        
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                <h5><i class="bi bi-book"></i> @grupo.Key</h5>
+                <span class="badge bg-light text-dark fs-6">
+                    Promedio: @promedio.ToString("F1")
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Actividad</th>
+                                <th>Tipo</th>
+                                <th>Calificacion</th>
+                                <th>Porcentaje</th>
+                                <th>Ponderacion</th>
+                                <th>Grafico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var nota in grupo.OrderBy(n => n.TipoActividad))
+                            {
+                                var badgeClass = "bg-primary";
+                                if (nota.TipoActividad == "Tarea") { badgeClass = "bg-secondary"; }
+                                else if (nota.TipoActividad == "Practica") { badgeClass = "bg-info"; }
+                                else if (nota.TipoActividad == "Examen") { badgeClass = "bg-danger"; }
+                                else if (nota.TipoActividad == "Proyecto") { badgeClass = "bg-warning text-dark"; }
+                                else if (nota.TipoActividad == "Laboratorio") { badgeClass = "bg-success"; }
+                                
+                                var color = nota.Calificacion >= 80 ? "bg-success" : (nota.Calificacion >= 51 ? "bg-warning" : "bg-danger");
+                                
+                                <tr>
+                                    <td><strong>@nota.ActividadNombre</strong></td>
+                                    <td><span class="badge @badgeClass">@nota.TipoActividad</span></td>
+                                    <td>
+                                        <strong class="fs-5 @(nota.Calificacion >= 51 ? "text-success" : "text-danger")">
+                                            @nota.Calificacion.ToString("F1")
+                                        </strong>
+                                    </td>
+                                    <td>@nota.ValorPorcentual%</td>
+                                    <td><strong>@nota.Ponderacion.ToString("F2")</strong></td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar @color" 
+                                                 role="progressbar" 
+                                                 style="width: @nota.Calificacion%" 
+                                                 aria-valuenow="@nota.Calificacion" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                @nota.Calificacion.ToString("F0")%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot class="table-secondary">
+                            <tr>
+                                <td colspan="4" class="text-end fw-bold">Nota Final:</td>
+                                <td colspan="2">
+                                    <strong class="fs-4 @(promedio >= 51 ? "text-success" : "text-danger")">
+                                        @promedio.ToString("F1")
+                                    </strong>
+                                    <span class="ms-2 badge @(promedio >= 51 ? "bg-success" : "bg-danger")">
+                                        @(promedio >= 51 ? "APROBADO" : "REPROBADO")
+                                    </span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h5><i class="bi bi-pie-chart"></i> Resumen General</h5>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Total Materias</h6>
+                            <h2>@notasPorMateria.Count()</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Total Actividades</h6>
+                            <h2>@Model.Count()</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Promedio General</h6>
+                            <h2>@Model.Average(n => n.Calificacion).ToString("F1")</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Nota Mas Alta</h6>
+                            <h2>@Model.Max(n => n.Calificacion).ToString("F1")</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="bi bi-journal-x" style="font-size: 5rem; color: #ccc;"></i>
+        <h3 class="text-muted mt-3">No tienes notas registradas</h3>
+        <p class="text-muted">Inscribete en materias para comenzar a ver tus calificaciones.</p>
+        <a asp-action="Inscripciones" class="btn btn-primary btn-lg mt-3">
+            <i class="bi bi-pencil-square"></i> Ver Materias
+        </a>
+    </div>
+}

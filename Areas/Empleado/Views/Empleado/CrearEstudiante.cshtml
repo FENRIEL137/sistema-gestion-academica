@@ -1,0 +1,202 @@
+@model SistemaGestionAcademica.Models.Entities.Estudiante
+@{
+    ViewData["Title"] = "Registrar Nuevo Estudiante";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a asp-action="Estudiantes">Estudiantes</a></li>
+                <li class="breadcrumb-item active">Nuevo Estudiante</li>
+            </ol>
+        </nav>
+        <h2><i class="bi bi-person-plus"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-person-badge"></i> Datos del Estudiante</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="CrearEstudiante" method="post" id="formEstudiante">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombre" class="form-label">
+                                <i class="bi bi-person"></i> Nombre <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre del estudiante" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Apellido" class="form-label">
+                                <i class="bi bi-person"></i> Apellido <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Apellido" class="form-control" placeholder="Apellido del estudiante" />
+                            <span asp-validation-for="Apellido" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CI" class="form-label">
+                            <i class="bi bi-credit-card"></i> Cedula de Identidad <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="CI" class="form-control" placeholder="Ej: 12345678" />
+                        <span asp-validation-for="CI" class="text-danger"></span>
+                        <small class="text-muted">Este campo es unico para cada estudiante</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Telefono" class="form-label">
+                                <i class="bi bi-telephone"></i> Telefono
+                            </label>
+                            <input asp-for="Telefono" class="form-control" placeholder="Ej: 77777777" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Correo" class="form-label">
+                                <i class="bi bi-envelope"></i> Correo Electronico
+                            </label>
+                            <input asp-for="Correo" class="form-control" type="email" 
+                                   placeholder="correo@ejemplo.com" />
+                            <span asp-validation-for="Correo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PagoInicial" class="form-label">
+                            <i class="bi bi-cash"></i> Pago Inicial
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">Bs.</span>
+                            <input asp-for="PagoInicial" class="form-control" type="number" 
+                                   step="0.01" min="0" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="PagoInicial" class="text-danger"></span>
+                        <small class="text-muted">Monto del pago inicial de inscripcion</small>
+                    </div>
+
+                    <hr />
+                    <h5><i class="bi bi-shield-lock"></i> Credenciales de Acceso</h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">
+                                <i class="bi bi-envelope-at"></i> Correo (Usuario) <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" name="email" id="email" class="form-control" 
+                                   placeholder="usuario@correo.com" required />
+                            <small class="text-muted">Se usara para iniciar sesion en el sistema</small>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="bi bi-key"></i> Contrasena <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="password" name="password" id="password" 
+                                       class="form-control" required minlength="8" 
+                                       placeholder="Minimo 8 caracteres" />
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="togglePassword()">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <small class="text-muted">
+                                Debe contener mayusculas, minusculas y numeros
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h6>Requisitos de contrasena:</h6>
+                            <ul class="small mb-0" id="passwordRequirements">
+                                <li id="reqLength">- Minimo 8 caracteres</li>
+                                <li id="reqUpper">- Al menos una mayuscula</li>
+                                <li id="reqLower">- Al menos una minuscula</li>
+                                <li id="reqNumber">- Al menos un numero</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Estudiantes" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> Registrar Estudiante
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h6><i class="bi bi-info-circle"></i> Informacion</h6>
+            </div>
+            <div class="card-body small">
+                <p><strong>Pago Inicial:</strong> Es obligatorio para que el estudiante pueda inscribirse en materias.</p>
+                <p><strong>Credenciales:</strong> El estudiante usara su correo y contrasena para acceder al sistema.</p>
+                <p><strong>CI:</strong> Debe ser unica, no puede haber dos estudiantes con la misma cedula.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h6><i class="bi bi-check-circle"></i> Despues del Registro</h6>
+            </div>
+            <div class="card-body small">
+                <ol class="mb-0">
+                    <li>El estudiante podra iniciar sesion</li>
+                    <li>Podra ver materias disponibles</li>
+                    <li>Necesitara pagar para inscribirse</li>
+                    <li>Recibira su horario automaticamente</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function togglePassword() {
+            var field = document.getElementById('password');
+            var icon = field.nextElementSibling.querySelector('i');
+            if (field.type === "password") {
+                field.type = "text";
+                icon.className = "bi bi-eye-slash";
+            } else {
+                field.type = "password";
+                icon.className = "bi bi-eye";
+            }
+        }
+
+        document.getElementById('password').addEventListener('input', function() {
+            var pass = this.value;
+            
+            document.getElementById('reqLength').innerHTML = 
+                (pass.length >= 8 ? '✅' : '❌') + ' Minimo 8 caracteres';
+            document.getElementById('reqUpper').innerHTML = 
+                (/[A-Z]/.test(pass) ? '✅' : '❌') + ' Al menos una mayuscula';
+            document.getElementById('reqLower').innerHTML = 
+                (/[a-z]/.test(pass) ? '✅' : '❌') + ' Al menos una minuscula';
+            document.getElementById('reqNumber').innerHTML = 
+                (/[0-9]/.test(pass) ? '✅' : '❌') + ' Al menos un numero';
+        });
+    </script>
+}

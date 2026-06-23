@@ -1,0 +1,100 @@
+@model IEnumerable<SistemaGestionAcademica.Models.Entities.Aula>
+@{
+    ViewData["Title"] = "Gestion de Aulas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-door-open"></i> @ViewData["Title"]</h2>
+    <a asp-action="CrearAula" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nueva Aula
+    </a>
+</div>
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var aula in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">
+                                    @if (aula.EsLaboratorio)
+                                    {
+                                        <i class="bi bi-cpu text-info"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-door-open text-primary"></i>
+                                    }
+                                    @aula.Nombre
+                                </h5>
+                                <span class="badge bg-secondary">@aula.Codigo</span>
+                            </div>
+                            @if (aula.Activo)
+                            {
+                                <span class="badge bg-success">Disponible</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Inactivo</span>
+                            }
+                        </div>
+                        
+                        <ul class="list-unstyled mb-3">
+                            <li>
+                                <i class="bi bi-people"></i> 
+                                <strong>Capacidad:</strong> @aula.Capacidad personas
+                            </li>
+                            <li>
+                                <i class="bi bi-diagram-3"></i> 
+                                <strong>Tipo:</strong> 
+                                @(aula.EsLaboratorio ? "Laboratorio" : "Aula Normal")
+                            </li>
+                            @if (!string.IsNullOrEmpty(aula.Ubicacion))
+                            {
+                                <li>
+                                    <i class="bi bi-geo-alt"></i> 
+                                    <strong>Ubicacion:</strong> @aula.Ubicacion
+                                </li>
+                            }
+                        </ul>
+
+                        @{
+                            var ocupacion = aula.Materias?.Count ?? 0;
+                            var porcentaje = aula.Capacidad > 0 ? (ocupacion * 100 / aula.Capacidad) : 0;
+                            var colorBar = porcentaje > 80 ? "bg-danger" : (porcentaje > 50 ? "bg-warning" : "bg-success");
+                        }
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar @colorBar" 
+                                 role="progressbar" 
+                                 style="width: @(porcentaje)%" 
+                                 aria-valuenow="@porcentaje" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                        <small class="text-muted">
+                            @ocupacion de @aula.Capacidad ocupados (@porcentaje%)
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-building" style="font-size: 3rem; color: #ccc;"></i>
+                <h4 class="text-muted mt-3">No hay aulas registradas</h4>
+                <a asp-action="CrearAula" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-lg"></i> Crear Primera Aula
+                </a>
+            </div>
+        </div>
+    }
+</div>

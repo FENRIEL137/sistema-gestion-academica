@@ -1,0 +1,140 @@
+@{
+    ViewData["Title"] = "Panel del Empleado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-speedometer2"></i> @ViewData["Title"]</h2>
+        <p class="text-muted">Bienvenido, @User.Identity?.Name</p>
+        <hr />
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Total Estudiantes</h6>
+                        <h2>@ViewBag.TotalEstudiantes</h2>
+                    </div>
+                    <i class="bi bi-people" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-primary bg-opacity-75">
+                <a asp-action="Estudiantes" class="text-white text-decoration-none small">
+                    Ver todos <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-danger text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Con Deudas</h6>
+                        <h2>@ViewBag.EstudiantesConDeuda</h2>
+                    </div>
+                    <i class="bi bi-exclamation-triangle" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-danger bg-opacity-75">
+                <a asp-action="Deudas" class="text-white text-decoration-none small">
+                    Ver deudas <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Pagos Pendientes</h6>
+                        <h2>@ViewBag.InscripcionesPendientes</h2>
+                    </div>
+                    <i class="bi bi-cash-stack" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+            <div class="card-footer bg-warning bg-opacity-75">
+                <a asp-action="Pagos" class="text-white text-decoration-none small">
+                    Gestionar pagos <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Periodo</h6>
+                        <h5>@DateTime.Now.ToString("MMMM yyyy")</h5>
+                    </div>
+                    <i class="bi bi-calendar-check" style="font-size: 2.5rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-lightning"></i> Accesos Rapidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="CrearEstudiante" class="text-decoration-none">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-person-plus" style="font-size: 2rem; color: #0d6efd;"></i>
+                                    <h6 class="mt-2">Registrar Estudiante</h6>
+                                    <small class="text-muted">Nuevo ingreso</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Estudiantes" class="text-decoration-none">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-people" style="font-size: 2rem; color: #198754;"></i>
+                                    <h6 class="mt-2">Ver Estudiantes</h6>
+                                    <small class="text-muted">Listado completo</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Pagos" class="text-decoration-none">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-cash-coin" style="font-size: 2rem; color: #ffc107;"></i>
+                                    <h6 class="mt-2">Registrar Pago</h6>
+                                    <small class="text-muted">Procesar pagos</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Deudas" class="text-decoration-none">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-clipboard-data" style="font-size: 2rem; color: #dc3545;"></i>
+                                    <h6 class="mt-2">Control de Deudas</h6>
+                                    <small class="text-muted">Seguimiento</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

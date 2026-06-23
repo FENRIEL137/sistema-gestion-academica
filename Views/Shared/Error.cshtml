@@ -1,0 +1,28 @@
+﻿@model SistemaGestionAcademica.Models.ViewModels.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="text-center mt-5">
+    <i class="bi bi-exclamation-triangle" style="font-size: 5rem; color: #dc3545;"></i>
+
+    <h1 class="display-4 mt-3">Error</h1>
+
+    <p class="lead">Ha ocurrido un error al procesar su solicitud.</p>
+
+    @if (Model != null && Model.ShowRequestId)
+    {
+        <p class="text-muted">
+            <strong>ID de solicitud:</strong> <code>@Model.RequestId</code>
+        </p>
+    }
+
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-house"></i> Volver al Inicio
+        </a>
+        <button onclick="history.back()" class="btn btn-secondary ms-2">
+            <i class="bi bi-arrow-left"></i> Volver Atras
+        </button>
+    </div>
+</div>

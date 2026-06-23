@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Sistema de Gestión Académica";
+}
+
+<div class="text-center">
+    <h1 class="display-3 mb-4">
+        <i class="bi bi-mortarboard-fill" style="color: #0d6efd;"></i>
+    </h1>
+    <h1 class="display-4 mb-3">SIGA</h1>
+    <h2 class="mb-4">Sistema de Gestión Académica</h2>
+    <p class="lead mb-4">
+        Plataforma integral para la gestión de inscripciones, pagos, calificaciones y administración académica.
+    </p>
+
+    @if (!User.Identity?.IsAuthenticated ?? true)
+    {
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-box-arrow-in-right" style="font-size: 3rem; color: #0d6efd;"></i>
+                        <h5 class="card-title mt-2">¿Ya tienes cuenta?</h5>
+                        <p class="card-text">Accede a tu panel personalizado según tu rol.</p>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">
+                            Iniciar Sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row mt-5">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-people" style="font-size: 2rem;"></i>
+                    <h5>Estudiantes</h5>
+                    <p class="small">Inscripción de materias, pagos y consulta de notas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-workspace" style="font-size: 2rem;"></i>
+                    <h5>Profesores</h5>
+                    <p class="small">Gestión de actividades y registro de calificaciones</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-badge" style="font-size: 2rem;"></i>
+                    <h5>Empleados</h5>
+                    <p class="small">Registro de estudiantes y control de pagos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-shield-check" style="font-size: 2rem;"></i>
+                    <h5>Administradores</h5>
+                    <p class="small">Gestión completa del sistema</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

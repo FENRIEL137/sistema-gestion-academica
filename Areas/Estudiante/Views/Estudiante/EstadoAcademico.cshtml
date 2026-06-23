@@ -1,0 +1,235 @@
+@model SistemaGestionAcademica.Models.DTOs.EstadoAcademicoDTO
+@{
+    ViewData["Title"] = "Estado Academico";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-clipboard-data"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+@if (Model != null)
+{
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-book" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2">@Model.TotalMaterias</h3>
+                    <p class="mb-0">Total Materias</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2">@Model.MateriasAprobadas</h3>
+                    <p class="mb-0">Aprobadas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-x-circle" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2">@Model.MateriasReprobadas</h3>
+                    <p class="mb-0">Reprobadas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2">@Model.PromedioGeneral.ToString("F1")</h3>
+                    <p class="mb-0">Promedio General</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5><i class="bi bi-pie-chart"></i> Progreso Academico</h5>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-4 text-center">
+                    @{
+                        var porcentaje = Model.TotalMaterias > 0 
+                            ? (Model.MateriasAprobadas * 100.0 / Model.TotalMaterias) 
+                            : 0;
+                        var colorPorcentaje = porcentaje >= 51 ? "#28a745" : "#dc3545";
+                    }
+                    <svg width="200" height="200" viewBox="0 0 200 200">
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="#e9ecef" stroke-width="15" />
+                        <circle cx="100" cy="100" r="90" fill="none" 
+                                stroke="@colorPorcentaje" 
+                                stroke-width="15"
+                                stroke-dasharray="@(2 * Math.PI * 90)" 
+                                stroke-dashoffset="@((2 * Math.PI * 90) - (porcentaje / 100 * 2 * Math.PI * 90))"
+                                transform="rotate(-90 100 100)" />
+                        <text x="100" y="100" text-anchor="middle" dy="7" 
+                              font-size="30" font-weight="bold" 
+                              fill="@colorPorcentaje">
+                            @porcentaje.ToString("F0")%
+                        </text>
+                    </svg>
+                </div>
+                <div class="col-md-8">
+                    <h6>Resumen de Rendimiento</h6>
+                    <div class="progress mb-3" style="height: 30px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: @porcentaje%">
+                            Aprobadas: @Model.MateriasAprobadas
+                        </div>
+                        <div class="progress-bar bg-danger" role="progressbar" 
+                             style="width: @(100 - porcentaje)%">
+                            Reprobadas: @Model.MateriasReprobadas
+                        </div>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Promedio General
+                            <span class="badge bg-primary rounded-pill fs-6">@Model.PromedioGeneral.ToString("F1")</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Materias Aprobadas
+                            <span class="badge bg-success rounded-pill fs-6">@Model.MateriasAprobadas</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Materias Reprobadas
+                            <span class="badge bg-danger rounded-pill fs-6">@Model.MateriasReprobadas</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-dark text-white">
+            <h5><i class="bi bi-list-check"></i> Detalle por Materia</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Materias.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Materia</th>
+                                <th>Nota Final</th>
+                                <th>Progreso</th>
+                                <th>Estado</th>
+                                <th>Pago</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                int index = 1;
+                            }
+                            @foreach (var materia in Model.Materias)
+                            {
+                                var notaF = materia.NotaFinal ?? 0;
+                                var colorBar = notaF >= 80 ? "bg-success" : (notaF >= 51 ? "bg-warning" : "bg-danger");
+                                
+                                <tr>
+                                    <td>@index</td>
+                                    <td>
+                                        <strong>@materia.MateriaNombre</strong>
+                                    </td>
+                                    <td>
+                                        <strong class="fs-5 @(notaF >= 51 ? "text-success" : "text-danger")">
+                                            @(materia.NotaFinal?.ToString("F1") ?? "N/A")
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 15px;">
+                                            <div class="progress-bar @colorBar" 
+                                                 role="progressbar" 
+                                                 style="width: @notaF%" 
+                                                 aria-valuenow="@notaF" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                @notaF.ToString("F0")%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (materia.Estado == "Aprobado")
+                                        {
+                                            <span class="badge bg-success">Aprobado</span>
+                                        }
+                                        else if (materia.Estado == "Reprobado")
+                                        {
+                                            <span class="badge bg-danger">Reprobado</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@materia.Estado</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (materia.PagoRealizado)
+                                        {
+                                            <span class="badge bg-success">Pagado</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Pendiente</span>
+                                        }
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-3">
+                    <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                    <p class="text-muted mt-2">No hay materias registradas.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.PromedioGeneral < 51 && Model.TotalMaterias > 0)
+    {
+        <div class="alert alert-warning mt-4">
+            <h5><i class="bi bi-exclamation-triangle"></i> Atencion</h5>
+            <p>Tu promedio general esta por debajo de 51. Te recomendamos:</p>
+            <ul>
+                <li>Asistir a clases de refuerzo</li>
+                <li>Consultar con tus profesores sobre areas de mejora</li>
+                <li>Organizar un plan de estudio</li>
+            </ul>
+        </div>
+    }
+    else if (Model.PromedioGeneral >= 80 && Model.TotalMaterias > 0)
+    {
+        <div class="alert alert-success mt-4">
+            <h5><i class="bi bi-trophy"></i> Excelente desempeno!</h5>
+            <p>Tu promedio general es sobresaliente. Sigue asi!</p>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-5">
+        <i class="bi bi-clipboard-x" style="font-size: 5rem; color: #ccc;"></i>
+        <h3 class="text-muted mt-3">No hay informacion academica disponible</h3>
+        <p class="text-muted">Inscribete en materias para ver tu estado academico.</p>
+        <a asp-action="Inscripciones" class="btn btn-primary btn-lg mt-3">
+            <i class="bi bi-pencil-square"></i> Inscribir Materias
+        </a>
+    </div>
+}

@@ -1,0 +1,123 @@
+@model SistemaGestionAcademica.Models.DTOs.EstadoAcademicoDTO
+@{
+    ViewData["Title"] = "Mi Panel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-person-circle"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h6>Materias Inscritas</h6>
+                <h2>@Model.TotalMaterias</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h6>Materias Aprobadas</h6>
+                <h2>@Model.MateriasAprobadas</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h6>Promedio General</h6>
+                <h2>@Model.PromedioGeneral.ToString("F1")</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h6>Deuda Pendiente</h6>
+                <h2>Bs. @ViewBag.DeudaTotal</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Accesos Rapidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <a asp-action="Inscripciones" class="list-group-item list-group-item-action">
+                        <i class="bi bi-pencil-square"></i> Inscripcion de Materias
+                    </a>
+                    <a asp-action="Pagos" class="list-group-item list-group-item-action">
+                        <i class="bi bi-cash-coin"></i> Realizar Pagos
+                    </a>
+                    <a asp-action="Notas" class="list-group-item list-group-item-action">
+                        <i class="bi bi-bar-chart"></i> Ver Notas
+                    </a>
+                    <a asp-action="Horario" class="list-group-item list-group-item-action">
+                        <i class="bi bi-calendar-week"></i> Mi Horario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Estado por Materia</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Materias.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Materia</th>
+                                    <th>Nota</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var materia in Model.Materias)
+                                {
+                                    <tr>
+                                        <td>@materia.MateriaNombre</td>
+                                        <td>@(materia.NotaFinal?.ToString("F1") ?? "N/A")</td>
+                                        <td>
+                                            @if (materia.Estado == "Aprobado")
+                                            {
+                                                <span class="badge bg-success">Aprobado</span>
+                                            }
+                                            else if (materia.Estado == "Reprobado")
+                                            {
+                                                <span class="badge bg-danger">Reprobado</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">@materia.Estado</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No esta inscrito en ninguna materia.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,246 @@
+﻿@{
+    var dashboardUrl = Url.Action("Dashboard", "Home", new { area = "" });
+
+    if (User.IsInRole("Administrador"))
+        dashboardUrl = Url.Action("Dashboard", "Admin", new { area = "Admin" });
+    else if (User.IsInRole("Empleado"))
+        dashboardUrl = Url.Action("Dashboard", "Empleado", new { area = "Empleado" });
+    else if (User.IsInRole("Profesor"))
+        dashboardUrl = Url.Action("Dashboard", "Profesor", new { area = "Profesor" });
+    else if (User.IsInRole("Estudiante"))
+        dashboardUrl = Url.Action("Dashboard", "Estudiante", new { area = "Estudiante" });
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SIGA</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="@dashboardUrl">
+                    <i class="bi bi-mortarboard-fill"></i> SIGA
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <ul class="navbar-nav me-auto">
+                            @* Menú Administrador *@
+                            @if (User.IsInRole("Administrador"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-people-fill"></i> Personas
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Admin" asp-action="Profesores">Profesores</a></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Admin" asp-action="Empleados">Empleados</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-gear"></i> Gestión
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Admin" asp-action="Materias">Materias</a></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Admin" asp-action="Aulas">Aulas</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Admin" asp-action="Configuracion">Configuración</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Admin" asp-controller="Admin" asp-action="Consultas">
+                                        <i class="bi bi-search"></i> Consultas
+                                    </a>
+                                </li>
+                            }
+
+                            @* Menú Profesor *@
+                            @if (User.IsInRole("Profesor"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Profesor" asp-controller="Profesor" asp-action="Materias">
+                                        <i class="bi bi-book"></i> Mis Materias
+                                    </a>
+                                </li>
+                            }
+
+                            @* Menú Estudiante *@
+                            @if (User.IsInRole("Estudiante"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Estudiante" asp-controller="Estudiante" asp-action="Inscripciones">
+                                        <i class="bi bi-pencil-square"></i> Inscripciones
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Estudiante" asp-controller="Estudiante" asp-action="Pagos">
+                                        <i class="bi bi-cash-coin"></i> Pagos
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Estudiante" asp-controller="Estudiante" asp-action="Notas">
+                                        <i class="bi bi-bar-chart"></i> Notas
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Estudiante" asp-controller="Estudiante" asp-action="Horario">
+                                        <i class="bi bi-calendar-week"></i> Horario
+                                    </a>
+                                </li>
+                            }
+
+                            @* Menú Empleado *@
+                            @if (User.IsInRole("Empleado"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Estudiantes">
+                                        <i class="bi bi-people"></i> Estudiantes
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Pagos">
+                                        <i class="bi bi-cash-stack"></i> Pagos
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Deudas">
+                                        <i class="bi bi-exclamation-triangle"></i> Deudas
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-person-circle"></i> @User.Identity?.Name
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <span class="dropdown-item-text fw-bold">
+                                            Rol: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+                                        </span>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="ChangePassword">
+                                            <i class="bi bi-key"></i> Cambiar Contraseña
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesion
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">
+                                    <i class="bi bi-person-plus"></i> Registrarse
+                                </a>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container mt-4 mb-5">
+        @* Breadcrumb - VERSIÓN CORREGIDA *@
+        @if (ViewBag.Breadcrumb != null)
+        {
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    @foreach (var item in ViewBag.Breadcrumb as List<SistemaGestionAcademica.Models.ViewModels.BreadcrumbItem>)
+                    {
+                        if (item.Active)
+                        {
+                            <li class="breadcrumb-item active" aria-current="page">
+                                @if (!string.IsNullOrEmpty(item.Icon))
+                                {
+                                    <i class="bi bi-@item.Icon"></i>
+                                }
+                                @item.Text
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="breadcrumb-item">
+                                <a href="@item.Url">
+                                    @if (!string.IsNullOrEmpty(item.Icon))
+                                    {
+                                        <i class="bi bi-@item.Icon"></i>
+                                    }
+                                    @item.Text
+                                </a>
+                            </li>
+                        }
+                    }
+                </ol>
+            </nav>
+        }
+
+        @* Mensajes de alerta *@
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["InfoMessage"] != null)
+        {
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle"></i> @TempData["InfoMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-light border-top">
+        <div class="container text-center">
+            <span class="text-muted">&copy; @DateTime.Now.Year - Sistema de Gestión Académica (SIGA) - Todos los derechos reservados</span>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

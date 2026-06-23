@@ -1,0 +1,228 @@
+@model IEnumerable<SistemaGestionAcademica.Models.Entities.Inscripcion>
+@{
+    ViewData["Title"] = "Control de Deudas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-exclamation-triangle"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card @(ViewBag.PeriodoPago != null && ViewBag.PeriodoPago ? "bg-success" : "bg-secondary") text-white">
+            <div class="card-body text-center">
+                <h5>Periodo de Pago</h5>
+                @if (ViewBag.PeriodoPago != null && ViewBag.PeriodoPago)
+                {
+                    <i class="bi bi-check-circle" style="font-size: 2rem;"></i>
+                    <p class="mb-0 mt-2">Periodo de pagos <strong>ACTIVO</strong></p>
+                    <small>
+                        @(ViewBag.InicioPeriodo != null ? ((DateTime)ViewBag.InicioPeriodo).ToString("dd/MM") : "--") 
+                        - 
+                        @(ViewBag.FinPeriodo != null ? ((DateTime)ViewBag.FinPeriodo).ToString("dd/MM") : "--")
+                    </small>
+                }
+                else
+                {
+                    <i class="bi bi-x-circle" style="font-size: 2rem;"></i>
+                    <p class="mb-0 mt-2">Periodo de pagos <strong>INACTIVO</strong></p>
+                    <small>Proximo: @(ViewBag.InicioPeriodo != null ? ((DateTime)ViewBag.InicioPeriodo).ToString("dd/MM") : "--")</small>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h5>Total Deudores</h5>
+                @{
+                    var totalDeudores = Model != null ? Model.Select(i => i.EstudianteId).Distinct().Count() : 0;
+                }
+                <h2>@totalDeudores</h2>
+                <p class="mb-0">estudiantes con deuda</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h5>Monto Total Pendiente</h5>
+                @{
+                    var montoTotal = Model != null ? Model.Sum(i => i.Materia.Costo) : 0;
+                }
+                <h2>Bs. @montoTotal.ToString("F2")</h2>
+                <p class="mb-0">en deudas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+        <h5><i class="bi bi-list-ul"></i> Materias Pendientes de Pago</h5>
+        <span class="badge bg-light text-dark">@(Model?.Count() ?? 0) pendientes</span>
+    </div>
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="deudasTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Estudiante</th>
+                            <th>CI</th>
+                            <th>Materia</th>
+                            <th>Costo</th>
+                            <th>Fecha Inscripcion</th>
+                            <th>Dias Atraso</th>
+                            <th>Estado</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 1;
+                        }
+                        @foreach (var inscripcion in Model)
+                        {
+                            var diasAtraso = (DateTime.Now - inscripcion.FechaInscripcion).Days;
+                            var moraClase = diasAtraso > 30 ? "table-danger" : (diasAtraso > 15 ? "table-warning" : "");
+                            
+                            <tr class="@moraClase deuda-row">
+                                <td>@index</td>
+                                <td>
+                                    <strong>@inscripcion.Estudiante.NombreCompleto</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@inscripcion.Estudiante.CI</span>
+                                </td>
+                                <td>@inscripcion.Materia.Nombre</td>
+                                <td>
+                                    <strong class="text-danger">Bs. @inscripcion.Materia.Costo.ToString("F2")</strong>
+                                </td>
+                                <td>
+                                    <small>@inscripcion.FechaInscripcion.ToString("dd/MM/yyyy")</small>
+                                </td>
+                                <td>
+                                    @if (diasAtraso > 30)
+                                    {
+                                        <span class="badge bg-danger">@diasAtraso dias</span>
+                                    }
+                                    else if (diasAtraso > 15)
+                                    {
+                                        <span class="badge bg-warning text-dark">@diasAtraso dias</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">@diasAtraso dias</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (diasAtraso > 30)
+                                    {
+                                        <span class="badge bg-danger">Mora</span>
+                                    }
+                                    else if (diasAtraso > 15)
+                                    {
+                                        <span class="badge bg-warning">Proximo a mora</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-info">Pendiente</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="DetallesEstudiante" asp-route-id="@inscripcion.EstudianteId" 
+                                           class="btn btn-outline-info" title="Ver estudiante">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-success" 
+                                                title="Registrar pago"
+                                                onclick="registrarPago(@inscripcion.Id, @inscripcion.Materia.Costo)">
+                                            <i class="bi bi-cash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            index++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-check-circle" style="font-size: 4rem; color: #28a745;"></i>
+                <h3 class="text-success mt-3">No hay deudas pendientes!</h3>
+                <p class="text-muted">Todos los estudiantes estan al dia con sus pagos.</p>
+            </div>
+        }
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i> 
+                    Los estudiantes con mas de 30 dias de atraso pueden tener penalizacion por mora.
+                </small>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="pagoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-cash"></i> Registrar Pago</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-area="Empleado" asp-controller="Empleado" asp-action="RegistrarPago" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="inscripcionId" id="modalInscripcionId" />
+                    <div class="mb-3">
+                        <label class="form-label">Monto a Pagar</label>
+                        <div class="input-group">
+                            <span class="input-group-text">Bs.</span>
+                            <input type="number" name="monto" id="modalMonto" class="form-control"
+                                   step="0.01" min="0" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Concepto</label>
+                        <select name="concepto" class="form-select">
+                            <option value="Pago de materia">Pago de Materia</option>
+                            <option value="Pago con penalizacion">Pago con Penalizacion</option>
+                            <option value="Pago parcial">Pago Parcial</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> Confirmar Pago
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function registrarPago(inscripcionId, monto) {
+            document.getElementById('modalInscripcionId').value = inscripcionId;
+            document.getElementById('modalMonto').value = monto;
+            var modal = new bootstrap.Modal(document.getElementById('pagoModal'));
+            modal.show();
+        }
+    </script>
+}

@@ -1,0 +1,173 @@
+@model IEnumerable<SistemaGestionAcademica.Models.Entities.Pago>
+@{
+    ViewData["Title"] = "Gestion de Pagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-cash-stack"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Buscar Estudiante</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Nombre o CI..." 
+                           id="searchPayment" onkeyup="filterPayments()" />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Desde</label>
+                <input type="date" class="form-control" name="fechaInicio" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Hasta</label>
+                <input type="date" class="form-control" name="fechaFin" />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mb-4 border-primary">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="bi bi-plus-circle"></i> Registrar Nuevo Pago</h5>
+    </div>
+    <div class="card-body">
+        <form asp-area="Empleado" asp-controller="Empleado" asp-action="RegistrarPago" method="post" class="row g-3">
+            <div class="col-md-3">
+                <label>Inscripcion ID</label>
+                <input type="number" name="inscripcionId" class="form-control" required />
+            </div>
+            <div class="col-md-3">
+                <label>Monto (Bs.)</label>
+                <input type="number" name="monto" class="form-control" step="0.01" min="0" required />
+            </div>
+            <div class="col-md-4">
+                <label>Concepto</label>
+                <select name="concepto" class="form-select">
+                    <option value="Pago de mensualidad">Pago de Mensualidad</option>
+                    <option value="Pago de materia">Pago de Materia</option>
+                    <option value="Pago inicial">Pago Inicial</option>
+                    <option value="Penalizacion por mora">Penalizacion por Mora</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-success w-100">Registrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5><i class="bi bi-list-ul"></i> Historial de Pagos</h5>
+        <span class="badge bg-primary">@(Model?.Count() ?? 0) pagos</span>
+    </div>
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="paymentsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Estudiante</th>
+                            <th>CI</th>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pago in Model)
+                        {
+                            <tr class="payment-row">
+                                <td>#@pago.Id</td>
+                                <td>
+                                    <strong>@(pago.Estudiante?.NombreCompleto ?? "N/A")</strong>
+                                </td>
+                                <td>@(pago.Estudiante?.CI ?? "N/A")</td>
+                                <td>
+                                    <span class="badge bg-secondary">@pago.Tipo</span>
+                                    @if (!string.IsNullOrEmpty(pago.Concepto))
+                                    {
+                                        <br /><small>@pago.Concepto</small>
+                                    }
+                                </td>
+                                <td>
+                                    <strong class="text-success">Bs. @pago.Monto.ToString("F2")</strong>
+                                </td>
+                                <td>
+                                    <small>@pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</small>
+                                </td>
+                                <td>
+                                    @{
+                                        var estadoClase = "bg-secondary";
+                                        if (pago.Estado == SistemaGestionAcademica.Models.Entities.EstadoPago.Completado)
+                                        {
+                                            estadoClase = "bg-success";
+                                        }
+                                        else if (pago.Estado == SistemaGestionAcademica.Models.Entities.EstadoPago.Pendiente)
+                                        {
+                                            estadoClase = "bg-warning";
+                                        }
+                                        else if (pago.Estado == SistemaGestionAcademica.Models.Entities.EstadoPago.Anulado)
+                                        {
+                                            estadoClase = "bg-danger";
+                                        }
+                                    }
+                                    <span class="badge @estadoClase">@pago.Estado</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Total:</strong></td>
+                            <td>
+                                <strong>Bs. @Model.Sum(p => p.Monto).ToString("F2")</strong>
+                            </td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-cash-stack" style="font-size: 3rem; color: #ccc;"></i>
+                <h4 class="text-muted mt-3">No hay pagos registrados</h4>
+                <p class="text-muted">Utilice el formulario superior para registrar un pago.</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterPayments() {
+            var input = document.getElementById('searchPayment');
+            var filter = input.value.toUpperCase();
+            var rows = document.getElementsByClassName('payment-row');
+
+            for (var i = 0; i < rows.length; i++) {
+                var text = rows[i].textContent || rows[i].innerText;
+                rows[i].style.display = text.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+            }
+        }
+    </script>
+}

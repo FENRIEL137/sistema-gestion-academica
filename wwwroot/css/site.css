@@ -1,0 +1,132 @@
+/* Estilos personalizados para SIGA */
+
+html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-color: #f8f9fa;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+/* Cards */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Dashboard cards */
+.card.bg-primary, .card.bg-success, .card.bg-info, .card.bg-warning, .card.bg-danger {
+    color: white;
+}
+
+/* Tables */
+.table th {
+    white-space: nowrap;
+}
+
+.table-responsive {
+    border-radius: 10px;
+}
+
+/* Buttons */
+.btn-group-sm .btn {
+    border-radius: 5px;
+}
+
+/* Badges */
+.badge {
+    font-size: 0.85rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Footer */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+}
+
+/* Login/Register cards */
+.col-lg-4 .card, .col-md-6 .card {
+    margin-top: 2rem;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .btn-group .btn {
+            border-radius: 5px !important;
+            margin-bottom: 2px;
+        }
+}
+
+/* Print styles */
+@media print {
+    .navbar, .footer, .btn, form {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+}

@@ -1,0 +1,107 @@
+@{
+    ViewData["Title"] = "Gestion de Pagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var deudas = ViewBag.Deudas as IEnumerable<SistemaGestionAcademica.Models.DTOs.DeudaDTO>;
+    var historial = ViewBag.Historial as IEnumerable<SistemaGestionAcademica.Models.DTOs.PagoDTO>;
+}
+
+<h2><i class="bi bi-cash-coin"></i> @ViewData["Title"]</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h5 class="card-title text-warning">Deuda Total</h5>
+                <h2 class="text-warning">Bs. @ViewBag.DeudaTotal</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Deudas Pendientes</h5>
+            </div>
+            <div class="card-body">
+                @if (deudas != null && deudas.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Materia</th>
+                                    <th>Monto</th>
+                                    <th>Fecha Inscripcion</th>
+                                    <th>Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var deuda in deudas)
+                                {
+                                    <tr>
+                                        <td>@deuda.MateriaNombre</td>
+                                        <td>Bs. @deuda.Monto</td>
+                                        <td>@deuda.FechaInscripcion.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <!-- CORREGIDO: Agregar area y controller explícitos -->
+                                            <form asp-area="Estudiante" asp-controller="Estudiante" asp-action="Pagar" method="post">
+                                                <input type="hidden" name="inscripcionId" value="@deuda.InscripcionId" />
+                                                <input type="hidden" name="monto" value="@deuda.Monto" />
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    <i class="bi bi-cash"></i> Pagar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-success">No tiene deudas pendientes.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5>Historial de Pagos</h5>
+    </div>
+    <div class="card-body">
+        @if (historial != null && historial.Any())
+        {
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var pago in historial)
+                        {
+                            <tr>
+                                <td>@pago.FechaPago.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@pago.Concepto</td>
+                                <td>Bs. @pago.Monto</td>
+                                <td><span class="badge bg-success">@pago.Estado</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No hay pagos registrados.</p>
+        }
+    </div>
+</div>

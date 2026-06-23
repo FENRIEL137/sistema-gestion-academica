@@ -1,0 +1,111 @@
+@model IEnumerable<SistemaGestionAcademica.Models.DTOs.EstudianteDTO>
+@{
+    ViewData["Title"] = "Estudiantes Inscritos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var materiaId = ViewBag.MateriaId;
+}
+
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-action="Materias">Mis Materias</a></li>
+                <li class="breadcrumb-item active">Estudiantes Inscritos</li>
+            </ol>
+        </nav>
+        <h2><i class="bi bi-people-fill"></i> @ViewData["Title"]</h2>
+        <hr />
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" id="searchStudent" class="form-control" 
+                           placeholder="Buscar por nombre o CI..." onkeyup="filterTable()" />
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="badge bg-primary fs-6">
+                    Total: @(Model?.Count() ?? 0) estudiantes
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="studentsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>CI</th>
+                            <th>Nombre Completo</th>
+                            <th>Telefono</th>
+                            <th>Correo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int index = 1;
+                        }
+                        @foreach (var estudiante in Model)
+                        {
+                            <tr class="student-row">
+                                <td>@index</td>
+                                <td><span class="badge bg-secondary">@estudiante.CI</span></td>
+                                <td><strong>@estudiante.NombreCompleto</strong></td>
+                                <td>@(estudiante.Telefono ?? "-")</td>
+                                <td>@(estudiante.Correo ?? "-")</td>
+                            </tr>
+                            index++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-people" style="font-size: 4rem; color: #ccc;"></i>
+                <h4 class="text-muted mt-3">No hay estudiantes inscritos</h4>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="mt-3 d-flex justify-content-between">
+    <a asp-action="Materias" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Volver a Materias
+    </a>
+    <div>
+        <a asp-action="Notas" asp-route-materiaId="@materiaId" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Registrar Notas
+        </a>
+        <a asp-action="ExportarExcel" asp-route-materiaId="@materiaId" class="btn btn-success">
+            <i class="bi bi-file-excel"></i> Exportar a Excel
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function filterTable() {
+            var input = document.getElementById('searchStudent');
+            var filter = input.value.toUpperCase();
+            var rows = document.getElementsByClassName('student-row');
+
+            for (var i = 0; i < rows.length; i++) {
+                var text = rows[i].textContent || rows[i].innerText;
+                rows[i].style.display = text.toUpperCase().indexOf(filter) > -1 ? '' : 'none';
+            }
+        }
+    </script>
+}
