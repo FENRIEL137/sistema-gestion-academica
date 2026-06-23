@@ -23,9 +23,29 @@ builder.Services.AddControllersWithViews();
 // =============================================
 // BASE DE DATOS
 // =============================================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (connectionString.Contains("Server=") || connectionString.Contains("Data Source="))
+    {
+        // SQL Server (desarrollo local)
+        options.UseSqlServer(connectionString,
+            sqlOptions => sqlOptions.MigrationsAssembly("SistemaGestionAcademica"));
+    }
+    else if (connectionString.Contains("postgres://") || connectionString.Contains("postgresql://"))
+    {
+        // PostgreSQL (Render producción)
+        options.UseNpgsql(connectionString,
+            npgsqlOptions => npgsqlOptions.MigrationsAssembly("SistemaGestionAcademica"));
+    }
+    else
+    {
+        // Por defecto SQL Server
+        options.UseSqlServer(connectionString,
+            sqlOptions => sqlOptions.MigrationsAssembly("SistemaGestionAcademica"));
+    }
+});
 
 // =============================================
 // IDENTITY
