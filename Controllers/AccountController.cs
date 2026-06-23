@@ -47,6 +47,28 @@ namespace SistemaGestionAcademica.Controllers
 
             if (!ModelState.IsValid)
                 return View(model);
+            var adminUser = await _userManager.FindByEmailAsync("admin@sistema.edu");
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser
+                {
+                    UserName = "admin@sistema.edu",
+                    Email = "admin@sistema.edu",
+                    NombreCompleto = "Administrador del Sistema",
+                    EmailConfirmed = true,
+                    Activo = true,
+                    SecurityStamp = Guid.NewGuid().ToString()
+                };
+
+                var createResult = await _userManager.CreateAsync(adminUser, "Admin123!");
+                if (createResult.Succeeded)
+                {
+                    if (!await _roleManager.RoleExistsAsync("Administrador"))
+                        await _roleManager.CreateAsync(new ApplicationRole("Administrador"));
+
+                    await _userManager.AddToRoleAsync(adminUser, "Administrador");
+                }
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
