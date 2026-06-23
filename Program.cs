@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Npgsql;
 using SistemaGestionAcademica.Data;
 using SistemaGestionAcademica.Models.Entities;
 using SistemaGestionAcademica.Repositories.Interfaces;
@@ -16,31 +15,25 @@ builder.WebHost.UseUrls($"http://*:{port}");
 builder.Services.AddControllersWithViews();
 
 // =============================================
-// SOLO POSTGRESQL
+// BASE DE DATOS
 // =============================================
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
 if (!string.IsNullOrEmpty(databaseUrl))
 {
-    // Render proporciona DATABASE_URL
+    // RENDER: PostgreSQL
     var uri = new Uri(databaseUrl);
     var userInfo = uri.UserInfo.Split(':');
-    var host = uri.Host;
-    var portDb = uri.Port;
-    var database = uri.AbsolutePath.TrimStart('/');
-    var username = userInfo[0];
-    var password = userInfo.Length > 1 ? userInfo[1] : "";
-
-    var connString = $"Host={host};Port={portDb};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    var connString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connString));
 }
 else
 {
-    // Desarrollo local
+    // LOCAL: SQLite (archivo)
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseNpgsql("Host=localhost;Database=siga;Username=postgres;Password=postgres"));
+        options.UseSqlite("Data Source=siga.db"));
 }
 
 // Identity
@@ -101,9 +94,19 @@ app.MapControllerRoute(
 // Inicializar
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await context.Database.EnsureCreatedAsync();
-    await DataInitializer.InitializeAsync(scope.ServiceProvider);
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        logger.LogInformation("Creando base de datos...");
+        await context.Database.EnsureCreatedAsync();
+        logger.LogInformation("Base de datos lista.");
+        await DataInitializer.InitializeAsync(scope.ServiceProvider);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Error: " + ex.Message);
+    }
 }
 
 app.Run();
