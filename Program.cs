@@ -7,49 +7,51 @@ using SistemaGestionAcademica.Repositories;
 using SistemaGestionAcademica.Services;
 using SistemaGestionAcademica.Services.Interfaces;
 
+// =============================================
+// FUNCION PARA CONVERTIR URL DE POSTGRES
+// (DEBE ESTAR AQUI, ANTES DE USARLA)
+// =============================================
+static string ConvertPostgresUrlToConnectionString(string url)
+{
+    var uri = new Uri(url);
+    var userInfo = uri.UserInfo.Split(':');
+
+    var host = uri.Host;
+    var port = uri.Port > 0 ? uri.Port : 5432;
+    var database = uri.AbsolutePath.TrimStart('/');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+
+    return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
-// =============================================
-// CONFIGURACION DE PUERTO PARA RENDER
-// =============================================
+// Puerto para Render
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 builder.WebHost.UseUrls($"http://*:{port}");
 
-// =============================================
-// SERVICIOS MVC
-// =============================================
 builder.Services.AddControllersWithViews();
 
-// =============================================
-// BASE DE DATOS
-// =============================================
+// Base de datos
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    if (connectionString.Contains("Server=") || connectionString.Contains("Data Source="))
+    if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://"))
     {
-        // SQL Server (desarrollo local)
-        options.UseSqlServer(connectionString,
-            sqlOptions => sqlOptions.MigrationsAssembly("SistemaGestionAcademica"));
-    }
-    else if (connectionString.Contains("postgres://") || connectionString.Contains("postgresql://"))
-    {
-        // PostgreSQL (Render producción)
-        options.UseNpgsql(connectionString,
+        var npgsqlConnectionString = ConvertPostgresUrlToConnectionString(connectionString);
+        options.UseNpgsql(npgsqlConnectionString,
             npgsqlOptions => npgsqlOptions.MigrationsAssembly("SistemaGestionAcademica"));
     }
     else
     {
-        // Por defecto SQL Server
         options.UseSqlServer(connectionString,
             sqlOptions => sqlOptions.MigrationsAssembly("SistemaGestionAcademica"));
     }
 });
 
-// =============================================
-// IDENTITY
-// =============================================
+// Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     options.Password.RequiredLength = 8;
@@ -65,9 +67,7 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// =============================================
-// COOKIES
-// =============================================
+// Cookies
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
@@ -77,9 +77,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// =============================================
-// REPOSITORIOS
-// =============================================
+// Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IEstudianteRepository, EstudianteRepository>();
 builder.Services.AddScoped<IProfesorRepository, ProfesorRepository>();
@@ -93,14 +91,10 @@ builder.Services.AddScoped<IActividadRepository, ActividadRepository>();
 builder.Services.AddScoped<INotaRepository, NotaRepository>();
 builder.Services.AddScoped<IConfiguracionInstitucionalRepository, ConfiguracionInstitucionalRepository>();
 
-// =============================================
-// UNIT OF WORK
-// =============================================
+// Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// =============================================
-// SERVICIOS
-// =============================================
+// Servicios
 builder.Services.AddScoped<IEstudianteService, EstudianteService>();
 builder.Services.AddScoped<IProfesorService, ProfesorService>();
 builder.Services.AddScoped<IEmpleadoService, EmpleadoService>();
@@ -109,9 +103,7 @@ builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddScoped<IInscripcionService, InscripcionService>();
 builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 
-// =============================================
-// SESIONES
-// =============================================
+// Sesiones
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -121,26 +113,14 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// =============================================
-// PIPELINE
-// =============================================
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
-}
-
+app.UseDeveloperExceptionPage();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 
-// =============================================
-// RUTAS
-// =============================================
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
@@ -149,16 +129,14 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// =============================================
-// INICIALIZAR BASE DE DATOS Y ROLES
-// =============================================
+// Inicializar base de datos
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate(); // Aplica migraciones automaticamente
+        await context.Database.MigrateAsync();
         await DataInitializer.InitializeAsync(services);
     }
     catch (Exception ex)
