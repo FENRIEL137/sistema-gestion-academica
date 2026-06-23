@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace SistemaGestionAcademica.Migrations
 {
     /// <inheritdoc />
@@ -473,36 +471,6 @@ namespace SistemaGestionAcademica.Migrations
                         principalTable: "Inscripciones",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Aulas",
-                columns: new[] { "Id", "Activo", "Capacidad", "Codigo", "EsLaboratorio", "Nombre", "Ubicacion" },
-                values: new object[,]
-                {
-                    { 1, true, 30, "A101", false, "Aula 101", "Primer Piso" },
-                    { 2, true, 30, "A102", false, "Aula 102", "Primer Piso" },
-                    { 3, true, 35, "A201", false, "Aula 201", "Segundo Piso" },
-                    { 4, true, 25, "LAB1", true, "Laboratorio de Computacion", "Primer Piso" },
-                    { 5, true, 20, "LAB2", true, "Laboratorio de Ciencias", "Segundo Piso" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "ConfiguracionesInstitucionales",
-                columns: new[] { "Id", "Activo", "ActualizadoPorId", "CostoBaseMateria", "DiaFinPagos", "DiaInicioPagos", "FechaUltimaActualizacion", "NombreInstitucion", "PagoInicialInscripcion", "PeriodoActual", "PorcentajePenalizacionMora" },
-                values: new object[] { 1, true, null, 300.00m, 30, 23, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Instituto de Educacion Superior", 500.00m, "2026-I", 5.00m });
-
-            migrationBuilder.InsertData(
-                table: "Horarios",
-                columns: new[] { "Id", "Activo", "Dia", "HoraFin", "HoraInicio" },
-                values: new object[,]
-                {
-                    { 1, true, 1, new TimeSpan(0, 10, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0) },
-                    { 2, true, 1, new TimeSpan(0, 12, 0, 0, 0), new TimeSpan(0, 10, 0, 0, 0) },
-                    { 3, true, 2, new TimeSpan(0, 10, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0) },
-                    { 4, true, 2, new TimeSpan(0, 12, 0, 0, 0), new TimeSpan(0, 10, 0, 0, 0) },
-                    { 5, true, 3, new TimeSpan(0, 16, 0, 0, 0), new TimeSpan(0, 14, 0, 0, 0) },
-                    { 6, true, 4, new TimeSpan(0, 10, 0, 0, 0), new TimeSpan(0, 8, 0, 0, 0) }
                 });
 
             migrationBuilder.CreateIndex(

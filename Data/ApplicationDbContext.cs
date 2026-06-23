@@ -27,18 +27,18 @@ namespace SistemaGestionAcademica.Data
         {
             base.OnModelCreating(builder);
 
-            // Configuración de ApplicationUser
+            // Configuracion de ApplicationUser
             builder.Entity<ApplicationUser>(entity =>
             {
                 entity.Property(u => u.NombreCompleto).IsRequired().HasMaxLength(200);
             });
 
-            // Configuración de índices únicos
+            // Configuracion de indices unicos
             builder.Entity<Estudiante>().HasIndex(e => e.CI).IsUnique();
             builder.Entity<Profesor>().HasIndex(p => p.CI).IsUnique();
             builder.Entity<Empleado>().HasIndex(e => e.CI).IsUnique();
 
-            // Configuración de relaciones
+            // Configuracion de relaciones
             builder.Entity<Inscripcion>()
                 .HasOne(i => i.Estudiante)
                 .WithMany(e => e.Inscripciones)
@@ -100,44 +100,10 @@ namespace SistemaGestionAcademica.Data
                 .OnDelete(DeleteBehavior.SetNull);
 
             // =============================================
-            // DATOS INICIALES (Seed Data) - VALORES FIJOS
+            // DATOS INICIALES (Seed Data) - CORREGIDO
             // =============================================
-
-            // Aulas iniciales
-            builder.Entity<Aula>().HasData(
-                new Aula { Id = 1, Codigo = "A101", Nombre = "Aula 101", Capacidad = 30, EsLaboratorio = false, Ubicacion = "Primer Piso", Activo = true },
-                new Aula { Id = 2, Codigo = "A102", Nombre = "Aula 102", Capacidad = 30, EsLaboratorio = false, Ubicacion = "Primer Piso", Activo = true },
-                new Aula { Id = 3, Codigo = "A201", Nombre = "Aula 201", Capacidad = 35, EsLaboratorio = false, Ubicacion = "Segundo Piso", Activo = true },
-                new Aula { Id = 4, Codigo = "LAB1", Nombre = "Laboratorio de Computacion", Capacidad = 25, EsLaboratorio = true, Ubicacion = "Primer Piso", Activo = true },
-                new Aula { Id = 5, Codigo = "LAB2", Nombre = "Laboratorio de Ciencias", Capacidad = 20, EsLaboratorio = true, Ubicacion = "Segundo Piso", Activo = true }
-            );
-
-            // Horarios iniciales
-            builder.Entity<Horario>().HasData(
-                new Horario { Id = 1, Dia = DayOfWeek.Monday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0), Activo = true },
-                new Horario { Id = 2, Dia = DayOfWeek.Monday, HoraInicio = new TimeSpan(10, 0, 0), HoraFin = new TimeSpan(12, 0, 0), Activo = true },
-                new Horario { Id = 3, Dia = DayOfWeek.Tuesday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0), Activo = true },
-                new Horario { Id = 4, Dia = DayOfWeek.Tuesday, HoraInicio = new TimeSpan(10, 0, 0), HoraFin = new TimeSpan(12, 0, 0), Activo = true },
-                new Horario { Id = 5, Dia = DayOfWeek.Wednesday, HoraInicio = new TimeSpan(14, 0, 0), HoraFin = new TimeSpan(16, 0, 0), Activo = true },
-                new Horario { Id = 6, Dia = DayOfWeek.Thursday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0), Activo = true }
-            );
-
-            // Configuración institucional inicial
-            builder.Entity<ConfiguracionInstitucional>().HasData(
-                new ConfiguracionInstitucional
-                {
-                    Id = 1,
-                    NombreInstitucion = "Instituto de Educacion Superior",
-                    PagoInicialInscripcion = 500.00m,
-                    CostoBaseMateria = 300.00m,
-                    PorcentajePenalizacionMora = 5.00m,
-                    DiaInicioPagos = 23,
-                    DiaFinPagos = 30,
-                    PeriodoActual = "2026-I",
-                    FechaUltimaActualizacion = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Unspecified),
-                    Activo = true
-                }
-            );
+            // NOTA: NO usamos IDs fijos, dejamos que la BD los genere
+            // Los datos iniciales se insertan en DataInitializer.cs
         }
     }
 }

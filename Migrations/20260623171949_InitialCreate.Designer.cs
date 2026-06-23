@@ -12,7 +12,7 @@ using SistemaGestionAcademica.Data;
 namespace SistemaGestionAcademica.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260619165344_InitialCreate")]
+    [Migration("20260623171949_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace SistemaGestionAcademica.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -319,58 +319,6 @@ namespace SistemaGestionAcademica.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Aulas");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activo = true,
-                            Capacidad = 30,
-                            Codigo = "A101",
-                            EsLaboratorio = false,
-                            Nombre = "Aula 101",
-                            Ubicacion = "Primer Piso"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Activo = true,
-                            Capacidad = 30,
-                            Codigo = "A102",
-                            EsLaboratorio = false,
-                            Nombre = "Aula 102",
-                            Ubicacion = "Primer Piso"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Activo = true,
-                            Capacidad = 35,
-                            Codigo = "A201",
-                            EsLaboratorio = false,
-                            Nombre = "Aula 201",
-                            Ubicacion = "Segundo Piso"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Activo = true,
-                            Capacidad = 25,
-                            Codigo = "LAB1",
-                            EsLaboratorio = true,
-                            Nombre = "Laboratorio de Computacion",
-                            Ubicacion = "Primer Piso"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Activo = true,
-                            Capacidad = 20,
-                            Codigo = "LAB2",
-                            EsLaboratorio = true,
-                            Nombre = "Laboratorio de Ciencias",
-                            Ubicacion = "Segundo Piso"
-                        });
                 });
 
             modelBuilder.Entity("SistemaGestionAcademica.Models.Entities.ConfiguracionInstitucional", b =>
@@ -419,21 +367,6 @@ namespace SistemaGestionAcademica.Migrations
                     b.HasIndex("ActualizadoPorId");
 
                     b.ToTable("ConfiguracionesInstitucionales");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activo = true,
-                            CostoBaseMateria = 300.00m,
-                            DiaFinPagos = 30,
-                            DiaInicioPagos = 23,
-                            FechaUltimaActualizacion = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NombreInstitucion = "Instituto de Educacion Superior",
-                            PagoInicialInscripcion = 500.00m,
-                            PeriodoActual = "2026-I",
-                            PorcentajePenalizacionMora = 5.00m
-                        });
                 });
 
             modelBuilder.Entity("SistemaGestionAcademica.Models.Entities.Empleado", b =>
@@ -577,56 +510,6 @@ namespace SistemaGestionAcademica.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Horarios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Activo = true,
-                            Dia = 1,
-                            HoraFin = new TimeSpan(0, 10, 0, 0, 0),
-                            HoraInicio = new TimeSpan(0, 8, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Activo = true,
-                            Dia = 1,
-                            HoraFin = new TimeSpan(0, 12, 0, 0, 0),
-                            HoraInicio = new TimeSpan(0, 10, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Activo = true,
-                            Dia = 2,
-                            HoraFin = new TimeSpan(0, 10, 0, 0, 0),
-                            HoraInicio = new TimeSpan(0, 8, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Activo = true,
-                            Dia = 2,
-                            HoraFin = new TimeSpan(0, 12, 0, 0, 0),
-                            HoraInicio = new TimeSpan(0, 10, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Activo = true,
-                            Dia = 3,
-                            HoraFin = new TimeSpan(0, 16, 0, 0, 0),
-                            HoraInicio = new TimeSpan(0, 14, 0, 0, 0)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Activo = true,
-                            Dia = 4,
-                            HoraFin = new TimeSpan(0, 10, 0, 0, 0),
-                            HoraInicio = new TimeSpan(0, 8, 0, 0, 0)
-                        });
                 });
 
             modelBuilder.Entity("SistemaGestionAcademica.Models.Entities.Inscripcion", b =>
