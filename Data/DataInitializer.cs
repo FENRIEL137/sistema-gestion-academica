@@ -19,25 +19,48 @@ namespace SistemaGestionAcademica.Data
             foreach (var r in roles)
             {
                 if (!await roleManager.RoleExistsAsync(r))
+                {
                     await roleManager.CreateAsync(new ApplicationRole(r));
+                    logger.LogInformation("Rol creado: " + r);
+                }
             }
 
             // Admin
-            if (await userManager.FindByEmailAsync("admin@sistema.edu") == null)
+            var email = "admin@sistema.edu";
+            var user = await userManager.FindByEmailAsync(email);
+
+            if (user == null)
             {
-                var admin = new ApplicationUser
+                logger.LogInformation("Creando admin...");
+                user = new ApplicationUser
                 {
-                    UserName = "admin@sistema.edu",
-                    Email = "admin@sistema.edu",
+                    UserName = email,
+                    Email = email,
                     NombreCompleto = "Administrador",
                     EmailConfirmed = true,
                     Activo = true
                 };
-                var result = await userManager.CreateAsync(admin, "Admin123!");
+
+                var result = await userManager.CreateAsync(user, "Admin123!");
+
                 if (result.Succeeded)
-                    await userManager.AddToRoleAsync(admin, "Administrador");
+                {
+                    logger.LogInformation("Admin creado OK");
+                    await userManager.AddToRoleAsync(user, "Administrador");
+                }
                 else
-                    logger.LogError($"Error admin: {string.Join(", ", result.Errors)}");
+                {
+                    foreach (var err in result.Errors)
+                        logger.LogError("Error: " + err.Description);
+                }
+            }
+            else
+            {
+                logger.LogInformation("Admin ya existe");
+                // Resetear contraseña por si acaso
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                await userManager.ResetPasswordAsync(user, token, "Admin123!");
+                logger.LogInformation("Contraseña reseteada");
             }
 
             // Horarios
@@ -45,12 +68,7 @@ namespace SistemaGestionAcademica.Data
             {
                 context.Horarios.AddRange(
                     new Horario { Dia = DayOfWeek.Monday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0) },
-                    new Horario { Dia = DayOfWeek.Monday, HoraInicio = new TimeSpan(10, 0, 0), HoraFin = new TimeSpan(12, 0, 0) },
-                    new Horario { Dia = DayOfWeek.Tuesday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0) },
-                    new Horario { Dia = DayOfWeek.Tuesday, HoraInicio = new TimeSpan(10, 0, 0), HoraFin = new TimeSpan(12, 0, 0) },
-                    new Horario { Dia = DayOfWeek.Wednesday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0) },
-                    new Horario { Dia = DayOfWeek.Thursday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0) },
-                    new Horario { Dia = DayOfWeek.Friday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0) }
+                    new Horario { Dia = DayOfWeek.Tuesday, HoraInicio = new TimeSpan(8, 0, 0), HoraFin = new TimeSpan(10, 0, 0) }
                 );
             }
 
@@ -59,12 +77,11 @@ namespace SistemaGestionAcademica.Data
             {
                 context.Aulas.AddRange(
                     new Aula { Codigo = "A101", Nombre = "Aula 101", Capacidad = 30 },
-                    new Aula { Codigo = "A102", Nombre = "Aula 102", Capacidad = 30 },
                     new Aula { Codigo = "LAB1", Nombre = "Laboratorio 1", Capacidad = 25, EsLaboratorio = true }
                 );
             }
 
-            // Configuracion
+            // Config
             if (!context.ConfiguracionesInstitucionales.Any())
             {
                 context.ConfiguracionesInstitucionales.Add(new ConfiguracionInstitucional
@@ -72,7 +89,6 @@ namespace SistemaGestionAcademica.Data
                     NombreInstitucion = "Instituto Superior",
                     PagoInicialInscripcion = 500,
                     CostoBaseMateria = 300,
-                    PorcentajePenalizacionMora = 5,
                     DiaInicioPagos = 23,
                     DiaFinPagos = 30,
                     PeriodoActual = "2026-I"
@@ -80,7 +96,7 @@ namespace SistemaGestionAcademica.Data
             }
 
             await context.SaveChangesAsync();
-            logger.LogInformation("Datos iniciales listos.");
+            logger.LogInformation("Datos iniciales OK");
         }
     }
 }

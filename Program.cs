@@ -14,6 +14,8 @@ builder.WebHost.UseUrls($"http://*:{port}");
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAntiforgery(options => options.Cookie.Expiration = TimeSpan.Zero);
+
 // =============================================
 // BASE DE DATOS
 // =============================================
