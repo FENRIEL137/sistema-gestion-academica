@@ -24,7 +24,8 @@ if (!string.IsNullOrEmpty(databaseUrl))
     // RENDER: PostgreSQL
     var uri = new Uri(databaseUrl);
     var userInfo = uri.UserInfo.Split(':');
-    var connString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    var portDb = uri.Port > 0 ? uri.Port : 5432;
+    var connString = $"Host={uri.Host};Port={portDb};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(connString));
