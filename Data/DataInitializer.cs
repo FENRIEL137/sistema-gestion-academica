@@ -4,7 +4,7 @@ using SistemaGestionAcademica.Models.Entities;
 
 namespace SistemaGestionAcademica.Data
 {
-    public static class DataInitializer
+    public class DataInitializer
     {
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
