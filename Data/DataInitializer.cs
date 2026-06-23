@@ -26,7 +26,43 @@ namespace SistemaGestionAcademica.Data
             }
 
             // Admin
-           
+            var email = "admin@sistema.edu";
+            var user = await userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                logger.LogInformation("Creando admin...");
+                user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    NombreCompleto = "Administrador",
+                    EmailConfirmed = true,
+                    Activo = true
+                };
+
+                var result = await userManager.CreateAsync(user, "Admin123!");
+
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("Admin creado OK");
+                    await userManager.AddToRoleAsync(user, "Administrador");
+                }
+                else
+                {
+                    foreach (var err in result.Errors)
+                        logger.LogError("Error: " + err.Description);
+                }
+            }
+            else
+            {
+                logger.LogInformation("Admin ya existe");
+                // Resetear contraseña por si acaso
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                await userManager.ResetPasswordAsync(user, token, "Admin123!");
+                logger.LogInformation("Contraseña reseteada");
+            }
+
 
             // Horarios
             if (!context.Horarios.Any())

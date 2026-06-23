@@ -54,7 +54,7 @@ namespace SistemaGestionAcademica.Controllers
                 {
                     UserName = "admin@sistema.edu",
                     Email = "admin@sistema.edu",
-                    NombreCompleto = "Administrador del Sistema",
+                    NombreCompleto = "Administrador",
                     EmailConfirmed = true,
                     Activo = true,
                     SecurityStamp = Guid.NewGuid().ToString()
@@ -87,11 +87,13 @@ namespace SistemaGestionAcademica.Controllers
                 user.UserName!,
                 model.Password,
                 model.RememberMe,
-                lockoutOnFailure: true);
+                lockoutOnFailure: false);
 
             // Busca esta parte en el método Login (después de PasswordSignInAsync)
             if (result.Succeeded)
             {
+                _logger.LogInformation($"Usuario {user.Email} inicio sesion. Rol: {string.Join(", ", await _userManager.GetRolesAsync(user))}");
+
                 user.UltimoAcceso = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
