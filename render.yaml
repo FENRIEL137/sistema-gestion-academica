@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sistema-gestion-academica
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+
+databases:
+  - name: siga-db
+    databaseName: SistemaGestionAcademicaDB
+    user: siga_user
+    plan: free

@@ -1,0 +1,21 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.vs/
+.vscode/
+
+## Node
+node_modules/
+
+## Secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+*.secret
+
+## OS
+.DS_Store
+Thumbs.db
