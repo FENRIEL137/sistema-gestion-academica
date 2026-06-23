@@ -97,15 +97,18 @@ namespace SistemaGestionAcademica.Controllers
 
                 // Redirigir según el rol - USA Dashboard, NO Index
                 if (await _userManager.IsInRoleAsync(user, "Administrador"))
-                    return RedirectToAction("Dashboard", "Admin", new { area = "Admin" });
-                else if (await _userManager.IsInRoleAsync(user, "Empleado"))
-                    return RedirectToAction("Dashboard", "Empleado", new { area = "Empleado" });
-                else if (await _userManager.IsInRoleAsync(user, "Profesor"))
-                    return RedirectToAction("Dashboard", "Profesor", new { area = "Profesor" });
-                else if (await _userManager.IsInRoleAsync(user, "Estudiante"))
-                    return RedirectToAction("Dashboard", "Estudiante", new { area = "Estudiante" });
+                    return Redirect("/Admin/Admin/Dashboard");
 
-                return RedirectToAction("Index", "Home");
+                if (await _userManager.IsInRoleAsync(user, "Empleado"))
+                    return Redirect("/Empleado/Empleado/Dashboard");
+
+                if (await _userManager.IsInRoleAsync(user, "Profesor"))
+                    return Redirect("/Profesor/Profesor/Dashboard");
+
+                if (await _userManager.IsInRoleAsync(user, "Estudiante"))
+                    return Redirect("/Estudiante/Estudiante/Dashboard");
+
+                return Redirect("/Home/Index");
             }
 
             if (result.IsLockedOut)
