@@ -66,7 +66,6 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Profesores/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CrearProfesor(ProfesorEntity profesor, string email, string password)
         {
             if (ModelState.IsValid)
