@@ -69,7 +69,7 @@ namespace SistemaGestionAcademica.Controllers.Profesor
 
         // POST: /Profesor/CrearActividad
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> CrearActividad(ActividadViewModel model)
         {
             if (ModelState.IsValid)
@@ -98,7 +98,7 @@ namespace SistemaGestionAcademica.Controllers.Profesor
 
         // POST: /Profesor/EliminarActividad/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EliminarActividad(int id, int materiaId)
         {
             await _profesorService.EliminarActividadAsync(id);
@@ -115,7 +115,7 @@ namespace SistemaGestionAcademica.Controllers.Profesor
 
         // POST: /Profesor/RegistrarNota
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> RegistrarNota(RegistrarNotaViewModel model)
         {
             if (ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace SistemaGestionAcademica.Controllers.Profesor
 
         // POST: /Profesor/EliminarNota/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EliminarNota(int id)
         {
             await _profesorService.EliminarNotaAsync(id);

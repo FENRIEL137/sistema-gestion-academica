@@ -120,7 +120,7 @@ namespace SistemaGestionAcademica.Controllers
 
         // POST: /Account/Logout
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
@@ -213,7 +213,6 @@ namespace SistemaGestionAcademica.Controllers
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -251,7 +250,6 @@ namespace SistemaGestionAcademica.Controllers
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -290,7 +288,6 @@ namespace SistemaGestionAcademica.Controllers
         // POST: /Account/ChangePassword
         [HttpPost]
         [Authorize]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)

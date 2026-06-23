@@ -50,7 +50,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/Estudiantes/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> CrearEstudiante(EstudianteEntity estudiante, string email, string password)
         {
             if (ModelState.IsValid)
@@ -115,7 +115,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/Estudiantes/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EditarEstudiante(int id, EstudianteEntity estudiante)
         {
             if (id != estudiante.Id) return NotFound();
@@ -141,7 +141,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/Estudiantes/Baja/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> DarBajaEstudiante(int id)
         {
             var estudiante = await _unitOfWork.Estudiantes.GetByIdAsync(id);
@@ -166,7 +166,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/Estudiantes/Reactivar/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> ReactivarEstudiante(int id)
         {
             var estudiante = await _unitOfWork.Estudiantes.GetByIdAsync(id);
@@ -190,7 +190,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/RegistrarPago
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> RegistrarPago(int inscripcionId, decimal monto, string concepto)
         {
             try
@@ -258,7 +258,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/RegistrarInscripcion
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> RegistrarInscripcion(int estudianteId, int materiaId)
         {
             var inscripcion = new Inscripcion
@@ -279,7 +279,7 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/BajaInscripcion/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> BajaInscripcion(int id)
         {
             var inscripcion = await _unitOfWork.Inscripciones.GetByIdAsync(id);

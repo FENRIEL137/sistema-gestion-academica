@@ -60,7 +60,7 @@ namespace SistemaGestionAcademica.Controllers.Estudiante
 
         // POST: /Estudiante/Inscribir/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Inscribir(int materiaId)
         {
             try
@@ -104,7 +104,7 @@ namespace SistemaGestionAcademica.Controllers.Estudiante
 
         // POST: /Estudiante/Pagar
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Pagar(int inscripcionId, decimal monto)
         {
             try

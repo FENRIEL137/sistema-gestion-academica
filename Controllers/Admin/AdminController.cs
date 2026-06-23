@@ -146,7 +146,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Profesores/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EliminarProfesor(int id)
         {
             var profesor = await _unitOfWork.Profesores.GetByIdAsync(id);
@@ -163,7 +163,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Profesores/Contratar/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> ContratarProfesor(int id)
         {
             var profesor = await _unitOfWork.Profesores.GetByIdAsync(id);
@@ -196,7 +196,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Empleados/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> CrearEmpleado(EmpleadoEntity empleado, string email, string password)
         {
             if (ModelState.IsValid)
@@ -249,7 +249,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Empleados/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EditarEmpleado(int id, EmpleadoEntity empleado)
         {
             if (id != empleado.Id) return NotFound();
@@ -275,7 +275,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Empleados/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EliminarEmpleado(int id)
         {
             var empleado = await _unitOfWork.Empleados.GetByIdAsync(id);
@@ -314,7 +314,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Materias/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> CrearMateria(MateriaEntity materia)
         {
             if (ModelState.IsValid)
@@ -354,7 +354,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Materias/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EditarMateria(int id, MateriaEntity materia)
         {
             if (id != materia.Id) return NotFound();
@@ -394,7 +394,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Aulas/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> CrearAula(AulaEntity aula)
         {
             if (ModelState.IsValid)
@@ -418,7 +418,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/EditarAula/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> EditarAula(int id, AulaEntity aula)
         {
             if (id != aula.Id) return NotFound();
@@ -457,7 +457,7 @@ namespace SistemaGestionAcademica.Controllers.Admin
 
         // POST: /Admin/Configuracion
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Configuracion(ConfiguracionInstitucional config)
         {
             if (ModelState.IsValid)
