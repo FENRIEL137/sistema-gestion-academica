@@ -58,10 +58,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-    options.Cookie.SameSite = SameSiteMode.Lax;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
-    options.SlidingExpiration = true;
 });
 
 // Repositorios
@@ -75,12 +72,12 @@ builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddScoped<IInscripcionService, InscripcionService>();
 builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 
-builder.Services.AddSession(options =>
+/*builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-});
+});*/
 
 var app = builder.Build();
 
@@ -89,7 +86,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
+//app.UseSession();
 
 app.MapControllerRoute(
     name: "areas",

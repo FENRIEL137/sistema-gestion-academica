@@ -100,13 +100,16 @@ namespace SistemaGestionAcademica.Controllers
                 _logger.LogInformation($"LOGIN OK: {user.Email} - Roles: {string.Join(", ", await _userManager.GetRolesAsync(user))}");
 
                 if (await _userManager.IsInRoleAsync(user, "Administrador"))
-                    return Redirect("/Admin/Admin/Dashboard");
+                    return RedirectToAction("Dashboard", "Admin", new { area = "Admin" });
+
                 if (await _userManager.IsInRoleAsync(user, "Empleado"))
-                    return Redirect("/Empleado/Empleado/Dashboard");
+                    return RedirectToAction("Dashboard", "Empleado", new { area = "Empleado" });
+
                 if (await _userManager.IsInRoleAsync(user, "Profesor"))
-                    return Redirect("/Profesor/Profesor/Dashboard");
+                    return RedirectToAction("Dashboard", "Profesor", new { area = "Profesor" });
+
                 if (await _userManager.IsInRoleAsync(user, "Estudiante"))
-                    return Redirect("/Estudiante/Estudiante/Dashboard");
+                    return RedirectToAction("Dashboard", "Estudiante", new { area = "Estudiante" });
 
                 return Redirect("/Home/Index");
             }
