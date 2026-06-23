@@ -70,6 +70,16 @@
                                                 </button>
                                             </form>
                                         }
+                                        else
+                                        {
+                                            <form asp-action="ContratarEmpleado" asp-route-id="@empleado.Id"
+                                                  method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-outline-success" 
+                                                        title="Reactivar">
+                                                    <i class="bi bi-person-check"></i>
+                                                </button>
+                                            </form>
+                                        }
                                     </div>
                                 </td>
                             </tr>

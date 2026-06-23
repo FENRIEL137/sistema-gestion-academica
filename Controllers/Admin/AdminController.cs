@@ -273,6 +273,22 @@ namespace SistemaGestionAcademica.Controllers.Admin
             return View(empleado);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ContratarEmpleado(int id)
+        {
+            var empleado = await _unitOfWork.Empleados.GetByIdAsync(id);
+            if (empleado == null) return NotFound();
+
+            empleado.Activo = true;
+            empleado.FechaBaja = null;
+            empleado.FechaContratacion = DateTime.UtcNow;
+            await _unitOfWork.Empleados.UpdateAsync(empleado);
+            await _unitOfWork.CompleteAsync();
+
+            TempData["SuccessMessage"] = "Empleado contratado exitosamente.";
+            return RedirectToAction(nameof(Empleados));
+        }
+
         // POST: /Admin/Empleados/Delete/5
         [HttpPost]
         
