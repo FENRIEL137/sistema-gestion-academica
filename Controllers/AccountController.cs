@@ -119,7 +119,7 @@ namespace SistemaGestionAcademica.Controllers
         }
 
         // POST: /Account/Logout
-        [HttpPost]
+        [HttpGet]
         
         public async Task<IActionResult> Logout()
         {
