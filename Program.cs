@@ -81,6 +81,7 @@ builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 
 var app = builder.Build();
 
+
 app.UseDeveloperExceptionPage();
 app.UseStaticFiles();
 app.UseRouting();
