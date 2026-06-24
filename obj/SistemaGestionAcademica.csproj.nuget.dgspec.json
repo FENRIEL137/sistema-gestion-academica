@@ -76,10 +76,6 @@
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[9.0.0, )"
-            },
-            "WebEssentials.AspNetCore.PWA": {
-              "target": "Package",
-              "version": "[1.0.85, )"
             }
           },
           "imports": [
