@@ -31,7 +31,7 @@ namespace SistemaGestionAcademica.Services
             {
                 EstudianteId = estudianteId,
                 MateriaId = materiaId,
-                FechaInscripcion = DateTime.Now,
+                FechaInscripcion = DateTime.UtcNow,
                 Estado = EstadoInscripcion.Activa,
                 PagoRealizado = false
             };
@@ -48,7 +48,7 @@ namespace SistemaGestionAcademica.Services
             if (inscripcion == null) return false;
 
             inscripcion.Estado = EstadoInscripcion.BajaDefinitiva;
-            inscripcion.FechaBaja = DateTime.Now;
+            inscripcion.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Inscripciones.UpdateAsync(inscripcion);
             await _unitOfWork.CompleteAsync();
             return true;

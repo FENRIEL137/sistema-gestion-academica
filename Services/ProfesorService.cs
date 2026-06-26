@@ -182,7 +182,7 @@ namespace SistemaGestionAcademica.Services
                 notaExistente.Calificacion = model.Calificacion;
                 notaExistente.Observaciones = model.Observaciones;
                 notaExistente.ModificadoPorId = profesorId;
-                notaExistente.UltimaModificacion = DateTime.Now;
+                notaExistente.UltimaModificacion = DateTime.UtcNow;
                 await _unitOfWork.Notas.UpdateAsync(notaExistente);
             }
             else
@@ -213,7 +213,7 @@ namespace SistemaGestionAcademica.Services
 
             nota.Calificacion = calificacion;
             nota.ModificadoPorId = profesorId;
-            nota.UltimaModificacion = DateTime.Now;
+            nota.UltimaModificacion = DateTime.UtcNow;
 
             await _unitOfWork.Notas.UpdateAsync(nota);
             await _unitOfWork.CompleteAsync();

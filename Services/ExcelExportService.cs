@@ -48,7 +48,7 @@ namespace SistemaGestionAcademica.Services
 
             worksheet.Cell(5, 1).Value = "Fecha:";
             worksheet.Cell(5, 1).Style.Font.Bold = true;
-            worksheet.Cell(5, 2).Value = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            worksheet.Cell(5, 2).Value = DateTime.UtcNow.ToString("dd/MM/yyyy HH:mm");
 
             // Encabezados de la tabla
             int headerRow = 7;
@@ -204,7 +204,7 @@ namespace SistemaGestionAcademica.Services
             worksheet.Cell(1, 1).Style.Font.FontSize = 16;
             worksheet.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-            worksheet.Cell(2, 1).Value = $"Fecha: {DateTime.Now:dd/MM/yyyy HH:mm}";
+            worksheet.Cell(2, 1).Value = $"Fecha: {DateTime.UtcNow:dd/MM/yyyy HH:mm}";
 
             // Encabezados
             var headers = new[] { "N°", "CI", "Nombre Completo", "Teléfono", "Correo", "Fecha Inscripción", "Estado" };
@@ -303,8 +303,8 @@ namespace SistemaGestionAcademica.Services
         /// </summary>
         public async Task<byte[]> ExportarReportePagosAsync(DateTime? fechaInicio = null, DateTime? fechaFin = null)
         {
-            var inicio = fechaInicio ?? DateTime.Now.AddMonths(-1);
-            var fin = fechaFin ?? DateTime.Now;
+            var inicio = fechaInicio ?? DateTime.UtcNow.AddMonths(-1);
+            var fin = fechaFin ?? DateTime.UtcNow;
             var pagos = await _unitOfWork.Pagos.GetPagosPorPeriodoAsync(inicio, fin);
 
             using var workbook = new XLWorkbook();
@@ -381,7 +381,7 @@ namespace SistemaGestionAcademica.Services
             worksheet.Cell(1, 1).Style.Font.FontColor = XLColor.Red;
             worksheet.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-            worksheet.Cell(2, 1).Value = $"Fecha: {DateTime.Now:dd/MM/yyyy}";
+            worksheet.Cell(2, 1).Value = $"Fecha: {DateTime.UtcNow:dd/MM/yyyy}";
 
             // Encabezados
             var headers = new[] { "N°", "CI", "Nombre Completo", "Materias Pendientes", "Deuda Total", "Teléfono" };
@@ -450,7 +450,7 @@ namespace SistemaGestionAcademica.Services
 
             worksheet.Cell(5, 1).Value = "Fecha:";
             worksheet.Cell(5, 1).Style.Font.Bold = true;
-            worksheet.Cell(5, 2).Value = DateTime.Now.ToString("dd/MM/yyyy");
+            worksheet.Cell(5, 2).Value = DateTime.UtcNow.ToString("dd/MM/yyyy");
 
             // Encabezados
             var headers = new[] { "N°", "Materia", "Profesor", "Horario", "Nota Final", "Estado" };

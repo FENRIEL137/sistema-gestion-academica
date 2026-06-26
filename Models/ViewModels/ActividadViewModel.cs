@@ -19,7 +19,7 @@ namespace SistemaGestionAcademica.Models.ViewModels
         [Required(ErrorMessage = "La fecha es requerida")]
         [DataType(DataType.Date)]
         [Display(Name = "Fecha")]
-        public DateTime Fecha { get; set; } = DateTime.Now;
+        public DateTime Fecha { get; set; } = DateTime.UtcNow;
 
         [Required(ErrorMessage = "El tipo de actividad es requerido")]
         [Display(Name = "Tipo de Actividad")]

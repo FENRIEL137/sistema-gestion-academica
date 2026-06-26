@@ -6,6 +6,6 @@ namespace SistemaGestionAcademica.Models.DTOs
         public string MateriaNombre { get; set; } = string.Empty;
         public decimal Monto { get; set; }
         public DateTime FechaInscripcion { get; set; }
-        public int DiasAtraso => (DateTime.Now - FechaInscripcion).Days;
+        public int DiasAtraso => (DateTime.UtcNow - FechaInscripcion).Days;
     }
 }

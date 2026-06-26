@@ -51,7 +51,7 @@ namespace SistemaGestionAcademica.Services
             {
                 EstudianteId = estudianteId,
                 MateriaId = materiaId,
-                FechaInscripcion = DateTime.Now,
+                FechaInscripcion = DateTime.UtcNow,
                 Estado = EstadoInscripcion.Activa,
                 PagoRealizado = false
             };
@@ -123,7 +123,7 @@ namespace SistemaGestionAcademica.Services
                 InscripcionId = inscripcionId,
                 EstudianteId = estudianteId,
                 Monto = monto,
-                FechaPago = DateTime.Now,
+                FechaPago = DateTime.UtcNow,
                 Tipo = TipoPago.Materia,
                 Estado = EstadoPago.Completado
             };

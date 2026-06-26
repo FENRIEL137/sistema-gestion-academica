@@ -46,7 +46,7 @@ namespace SistemaGestionAcademica.Services
             await _userManager.AddToRoleAsync(user, "Profesor");
 
             profesor.UserId = user.Id;
-            profesor.FechaContratacion = DateTime.Now;
+            profesor.FechaContratacion = DateTime.UtcNow;
             profesor.Activo = true;
 
             await _unitOfWork.Profesores.AddAsync(profesor);
@@ -79,7 +79,7 @@ namespace SistemaGestionAcademica.Services
             if (profesor == null) return false;
 
             profesor.Activo = false;
-            profesor.FechaBaja = DateTime.Now;
+            profesor.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Profesores.UpdateAsync(profesor);
             await _unitOfWork.CompleteAsync();
             return true;
@@ -92,7 +92,7 @@ namespace SistemaGestionAcademica.Services
 
             profesor.Activo = true;
             profesor.FechaBaja = null;
-            profesor.FechaContratacion = DateTime.Now;
+            profesor.FechaContratacion = DateTime.UtcNow;
             await _unitOfWork.Profesores.UpdateAsync(profesor);
             await _unitOfWork.CompleteAsync();
             return true;
@@ -121,7 +121,7 @@ namespace SistemaGestionAcademica.Services
             await _userManager.AddToRoleAsync(user, "Empleado");
 
             empleado.UserId = user.Id;
-            empleado.FechaContratacion = DateTime.Now;
+            empleado.FechaContratacion = DateTime.UtcNow;
             empleado.Activo = true;
 
             await _unitOfWork.Empleados.AddAsync(empleado);
@@ -154,7 +154,7 @@ namespace SistemaGestionAcademica.Services
             if (empleado == null) return false;
 
             empleado.Activo = false;
-            empleado.FechaBaja = DateTime.Now;
+            empleado.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Empleados.UpdateAsync(empleado);
             await _unitOfWork.CompleteAsync();
             return true;

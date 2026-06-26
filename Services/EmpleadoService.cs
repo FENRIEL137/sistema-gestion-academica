@@ -37,7 +37,7 @@ namespace SistemaGestionAcademica.Services
             await _userManager.AddToRoleAsync(user, "Estudiante");
 
             estudiante.UserId = user.Id;
-            estudiante.FechaInscripcion = DateTime.Now;
+            estudiante.FechaInscripcion = DateTime.UtcNow;
             estudiante.Activo = true;
 
             await _unitOfWork.Estudiantes.AddAsync(estudiante);
@@ -59,14 +59,14 @@ namespace SistemaGestionAcademica.Services
             if (estudiante == null) return false;
 
             estudiante.Activo = false;
-            estudiante.FechaBaja = DateTime.Now;
+            estudiante.FechaBaja = DateTime.UtcNow;
 
             // Dar de baja inscripciones activas
             var inscripciones = await _unitOfWork.Estudiantes.GetInscripcionesEstudianteAsync(id);
             foreach (var inscripcion in inscripciones.Where(i => i.Estado == EstadoInscripcion.Activa))
             {
                 inscripcion.Estado = EstadoInscripcion.BajaDefinitiva;
-                inscripcion.FechaBaja = DateTime.Now;
+                inscripcion.FechaBaja = DateTime.UtcNow;
                 await _unitOfWork.Inscripciones.UpdateAsync(inscripcion);
             }
 
@@ -97,7 +97,7 @@ namespace SistemaGestionAcademica.Services
                 InscripcionId = inscripcionId,
                 EstudianteId = inscripcion.EstudianteId,
                 Monto = monto,
-                FechaPago = DateTime.Now,
+                FechaPago = DateTime.UtcNow,
                 Tipo = TipoPago.Materia,
                 Concepto = concepto,
                 RegistradoPorId = usuarioId,
@@ -129,7 +129,7 @@ namespace SistemaGestionAcademica.Services
             {
                 EstudianteId = estudianteId,
                 MateriaId = materiaId,
-                FechaInscripcion = DateTime.Now,
+                FechaInscripcion = DateTime.UtcNow,
                 Estado = EstadoInscripcion.Activa,
                 PagoRealizado = false
             };
@@ -145,7 +145,7 @@ namespace SistemaGestionAcademica.Services
             if (inscripcion == null) return false;
 
             inscripcion.Estado = EstadoInscripcion.BajaTemporal;
-            inscripcion.FechaBaja = DateTime.Now;
+            inscripcion.FechaBaja = DateTime.UtcNow;
             await _unitOfWork.Inscripciones.UpdateAsync(inscripcion);
             await _unitOfWork.CompleteAsync();
             return true;
@@ -156,7 +156,7 @@ namespace SistemaGestionAcademica.Services
             var config = await _unitOfWork.Configuraciones.GetConfiguracionActualAsync();
             if (config == null) return false;
 
-            var hoy = DateTime.Now;
+            var hoy = DateTime.UtcNow;
             var inicio = new DateTime(hoy.Year, hoy.Month, config.DiaInicioPagos);
             var fin = new DateTime(hoy.Year, hoy.Month, config.DiaFinPagos);
 

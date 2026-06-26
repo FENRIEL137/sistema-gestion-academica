@@ -23,7 +23,7 @@ namespace SistemaGestionAcademica.Services
 
             // Verificar si hay penalización por mora
             var config = await _unitOfWork.Configuraciones.GetConfiguracionActualAsync();
-            var diasAtraso = (DateTime.Now - inscripcion.FechaInscripcion).Days;
+            var diasAtraso = (DateTime.UtcNow - inscripcion.FechaInscripcion).Days;
             decimal montoFinal = monto;
 
             if (diasAtraso > 30 && config != null)
@@ -37,7 +37,7 @@ namespace SistemaGestionAcademica.Services
                 InscripcionId = inscripcionId,
                 EstudianteId = estudianteId,
                 Monto = montoFinal,
-                FechaPago = DateTime.Now,
+                FechaPago = DateTime.UtcNow,
                 Tipo = TipoPago.Materia,
                 Concepto = concepto,
                 Estado = EstadoPago.Completado
@@ -77,7 +77,7 @@ namespace SistemaGestionAcademica.Services
             var config = await _unitOfWork.Configuraciones.GetConfiguracionActualAsync();
             if (config == null) return false;
 
-            var hoy = DateTime.Now;
+            var hoy = DateTime.UtcNow;
             var inicio = new DateTime(hoy.Year, hoy.Month, config.DiaInicioPagos);
             var fin = new DateTime(hoy.Year, hoy.Month, config.DiaFinPagos);
 
@@ -90,7 +90,7 @@ namespace SistemaGestionAcademica.Services
             if (config == null) return;
 
             var inscripcionesPendientes = await _unitOfWork.Inscripciones.GetInscripcionesPendientesPagoAsync();
-            var hoy = DateTime.Now;
+            var hoy = DateTime.UtcNow;
 
             foreach (var inscripcion in inscripcionesPendientes)
             {
