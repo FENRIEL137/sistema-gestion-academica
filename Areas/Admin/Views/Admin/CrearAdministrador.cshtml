@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Nuevo Administrador";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4>@ViewData["Title"]</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="CrearAdministrador" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input name="nombre" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input name="email" type="email" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
+                        <input name="password" type="password" class="form-control" required minlength="6" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear Administrador</button>
+                    <a asp-action="Dashboard" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

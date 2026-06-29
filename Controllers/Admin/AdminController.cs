@@ -471,6 +471,42 @@ namespace SistemaGestionAcademica.Controllers.Admin
             return View(config);
         }
 
+        [HttpGet]
+        public IActionResult CrearAdministrador()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CrearAdministrador(string email, string password, string nombre)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                NombreCompleto = nombre,
+                EmailConfirmed = true,
+                Activo = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+            if (result.Succeeded)
+            {
+                if (!await _roleManager.RoleExistsAsync("Administrador"))
+                    await _roleManager.CreateAsync(new ApplicationRole("Administrador"));
+
+                await _userManager.AddToRoleAsync(user, "Administrador");
+                TempData["SuccessMessage"] = "Administrador creado exitosamente.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error: " + string.Join(", ", result.Errors);
+            }
+
+            return RedirectToAction(nameof(Profesores));
+        }
+
         // POST: /Admin/Configuracion
         [HttpPost]
         
