@@ -64,7 +64,6 @@ namespace SistemaGestionAcademica.Services
 
         public async Task<ActividadDTO> CrearActividadAsync(ActividadViewModel model)
         {
-            // Validar que los porcentajes no excedan 100%
             if (!await _unitOfWork.Actividades.ValidarPorcentajesAsync(model.MateriaId, model.ValorPorcentual))
                 throw new InvalidOperationException("La suma de porcentajes no puede exceder 100%");
 
@@ -72,10 +71,12 @@ namespace SistemaGestionAcademica.Services
             {
                 Nombre = model.Nombre,
                 Descripcion = model.Descripcion,
-                Fecha = model.Fecha,
+                Fecha = model.Fecha.ToUniversalTime(), // Convertir a UTC
                 Tipo = model.Tipo,
                 ValorPorcentual = model.ValorPorcentual,
-                MateriaId = model.MateriaId
+                MateriaId = model.MateriaId,
+                FechaCreacion = DateTime.UtcNow,       // Usar UTC
+                Activo = true
             };
 
             await _unitOfWork.Actividades.AddAsync(actividad);
