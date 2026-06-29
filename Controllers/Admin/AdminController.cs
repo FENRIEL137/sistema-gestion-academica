@@ -470,16 +470,36 @@ namespace SistemaGestionAcademica.Controllers.Admin
             }
             return View(config);
         }
+        // =============================================
+        // GESTIÓN DE ADMINISTRADORES
+        // =============================================
 
-        [HttpGet]
+        // GET: /Admin/Administradores
+        public async Task<IActionResult> Administradores()
+        {
+            var adminRole = await _roleManager.FindByNameAsync("Administrador");
+            if (adminRole == null) return View(new List<ApplicationUser>());
+
+            var adminUsers = await _userManager.GetUsersInRoleAsync("Administrador");
+            return View(adminUsers);
+        }
+
+        // GET: /Admin/CrearAdministrador
         public IActionResult CrearAdministrador()
         {
             return View();
         }
 
+        // POST: /Admin/CrearAdministrador
         [HttpPost]
         public async Task<IActionResult> CrearAdministrador(string email, string password, string nombre)
         {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(nombre))
+            {
+                TempData["ErrorMessage"] = "Todos los campos son obligatorios.";
+                return View();
+            }
+
             var user = new ApplicationUser
             {
                 UserName = email,
@@ -497,15 +517,87 @@ namespace SistemaGestionAcademica.Controllers.Admin
                     await _roleManager.CreateAsync(new ApplicationRole("Administrador"));
 
                 await _userManager.AddToRoleAsync(user, "Administrador");
-                TempData["SuccessMessage"] = "Administrador creado exitosamente.";
+                TempData["SuccessMessage"] = $"Administrador '{nombre}' creado exitosamente.";
             }
             else
             {
-                TempData["ErrorMessage"] = "Error: " + string.Join(", ", result.Errors);
+                TempData["ErrorMessage"] = "Error: " + string.Join(", ", result.Errors.Select(e => e.Description));
             }
 
-            return RedirectToAction(nameof(Profesores));
+            return RedirectToAction(nameof(Administradores));
         }
+
+        // GET: /Admin/EditarAdministrador/{id}
+        public async Task<IActionResult> EditarAdministrador(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            ViewBag.UserId = id;
+            ViewBag.NombreActual = user.NombreCompleto;
+            ViewBag.EmailActual = user.Email;
+
+            return View();
+        }
+
+        // POST: /Admin/EditarAdministrador/{id}
+        [HttpPost]
+        public async Task<IActionResult> EditarAdministrador(string id, string nombre, string email, string password)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            user.NombreCompleto = nombre;
+            user.Email = email;
+            user.UserName = email;
+            user.NormalizedEmail = email.ToUpper();
+            user.NormalizedUserName = email.ToUpper();
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                TempData["ErrorMessage"] = "Error al actualizar: " + string.Join(", ", result.Errors.Select(e => e.Description));
+                return RedirectToAction(nameof(Administradores));
+            }
+
+            if (!string.IsNullOrEmpty(password))
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var passResult = await _userManager.ResetPasswordAsync(user, token, password);
+                if (!passResult.Succeeded)
+                {
+                    TempData["ErrorMessage"] = "Datos actualizados, pero error al cambiar contraseña.";
+                    return RedirectToAction(nameof(Administradores));
+                }
+            }
+
+            TempData["SuccessMessage"] = $"Administrador '{nombre}' actualizado exitosamente.";
+            return RedirectToAction(nameof(Administradores));
+        }
+
+        // POST: /Admin/EliminarAdministrador/{id}
+        [HttpPost]
+        public async Task<IActionResult> EliminarAdministrador(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            // No permitir eliminarse a sí mismo
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser != null && currentUser.Id == id)
+            {
+                TempData["ErrorMessage"] = "No puedes eliminar tu propio usuario.";
+                return RedirectToAction(nameof(Administradores));
+            }
+
+            user.Activo = false;
+            await _userManager.UpdateAsync(user);
+            await _userManager.RemoveFromRoleAsync(user, "Administrador");
+
+            TempData["SuccessMessage"] = "Administrador desactivado exitosamente.";
+            return RedirectToAction(nameof(Administradores));
+        }
+
 
         // POST: /Admin/Configuracion
         [HttpPost]
