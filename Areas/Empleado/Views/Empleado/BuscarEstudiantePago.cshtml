@@ -18,15 +18,22 @@
                 <h5><i class="bi bi-credit-card"></i> Buscar Estudiante</h5>
             </div>
             <div class="card-body">
-                <form asp-action="BuscarEstudiantePago" method="post">
+                <form asp-action="BuscarEstudiantePago" method="post" id="formBusqueda">
                     <div class="mb-3">
                         <label class="form-label">CI o Nombre del Estudiante</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-search"></i></span>
-                            <input name="busqueda" class="form-control form-control-lg"
+                            <input name="busqueda" id="inputBusqueda" class="form-control form-control-lg"
                                    placeholder="Ej: 12345678 o Juan Perez" required autofocus />
+                            <button type="button" id="btnMicrofono" class="btn btn-danger"
+                                    title="Buscar por voz" onclick="iniciarReconocimiento()">
+                                <i class="bi bi-mic"></i>
+                            </button>
                         </div>
-                        <small class="text-muted">Puede buscar por CI exacto o por nombre completo</small>
+                        <small class="text-muted">Escriba o use el micrófono <i class="bi bi-mic text-danger"></i> para buscar por voz</small>
+                        <div id="estadoVoz" class="mt-1" style="display:none;">
+                            <span class="badge bg-danger pulse">🎤 Escuchando...</span>
+                        </div>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg">
@@ -38,3 +45,93 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <style>
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @@keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        #btnMicrofono.escuchando {
+            background-color: #dc3545;
+            animation: pulse 0.5s infinite;
+        }
+    </style>
+
+    <script>
+        // Verificar si el navegador soporta Speech Recognition
+        var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        var recognition = null;
+        var escuchando = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'es-ES';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                escuchando = true;
+                document.getElementById('btnMicrofono').classList.add('escuchando');
+                document.getElementById('btnMicrofono').innerHTML = '<i class="bi bi-mic-fill"></i>';
+                document.getElementById('estadoVoz').style.display = 'block';
+                document.getElementById('inputBusqueda').placeholder = 'Escuchando...';
+            };
+
+            recognition.onend = function() {
+                escuchando = false;
+                document.getElementById('btnMicrofono').classList.remove('escuchando');
+                document.getElementById('btnMicrofono').innerHTML = '<i class="bi bi-mic"></i>';
+                document.getElementById('estadoVoz').style.display = 'none';
+                document.getElementById('inputBusqueda').placeholder = 'Ej: 12345678 o Juan Perez';
+            };
+
+            recognition.onresult = function(event) {
+                var resultado = event.results[0][0].transcript;
+                document.getElementById('inputBusqueda').value = resultado;
+            };
+
+            recognition.onerror = function(event) {
+                console.log('Error de voz:', event.error);
+                escuchando = false;
+                document.getElementById('btnMicrofono').classList.remove('escuchando');
+                document.getElementById('btnMicrofono').innerHTML = '<i class="bi bi-mic"></i>';
+                document.getElementById('estadoVoz').style.display = 'none';
+
+                if (event.error === 'not-allowed') {
+                    alert('Permiso de microfono denegado. Por favor active el microfono en su navegador.');
+                } else if (event.error === 'no-speech') {
+                    alert('No se detecto voz. Intente de nuevo.');
+                }
+            };
+        }
+
+        function iniciarReconocimiento() {
+            if (!SpeechRecognition) {
+                alert('Su navegador no soporta busqueda por voz. Use Chrome, Edge o un celular Android.');
+                return;
+            }
+
+            if (escuchando) {
+                recognition.stop();
+                return;
+            }
+
+            recognition.start();
+        }
+    </script>
+}
