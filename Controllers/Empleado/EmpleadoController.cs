@@ -265,26 +265,67 @@ namespace SistemaGestionAcademica.Controllers.Empleado
 
         // POST: /Empleado/BuscarEstudiantePago
         [HttpPost]
-        public async Task<IActionResult> BuscarEstudiantePago(string ci)
+        public async Task<IActionResult> BuscarEstudiantePago(string busqueda)
         {
-            if (string.IsNullOrEmpty(ci))
+            if (string.IsNullOrEmpty(busqueda))
             {
-                TempData["ErrorMessage"] = "Ingrese un CI para buscar.";
+                TempData["ErrorMessage"] = "Ingrese un CI o nombre para buscar.";
                 return View();
             }
 
-            var estudiante = await _unitOfWork.Estudiantes.GetByCIAsync(ci);
-            if (estudiante == null)
+            // Buscar por CI exacto
+            var estudiante = await _unitOfWork.Estudiantes.GetByCIAsync(busqueda.Trim());
+
+            if (estudiante != null)
             {
-                TempData["ErrorMessage"] = "No se encontro ningun estudiante con CI: " + ci;
-                return View();
+                var inscripciones = await _unitOfWork.Estudiantes.GetInscripcionesEstudianteAsync(estudiante.Id);
+                var pendientes = inscripciones.Where(i => !i.PagoRealizado && i.Estado == EstadoInscripcion.Activa).ToList();
+                ViewBag.Estudiante = estudiante;
+                ViewBag.Resultados = null;
+                return View("RegistrarPagoEstudiante", pendientes);
             }
 
-            // Obtener inscripciones pendientes de pago
+            // Si no encuentra por CI, buscar por nombre (contiene)
+            var estudiantes = await _unitOfWork.Estudiantes.GetAllAsync();
+            var resultados = estudiantes
+                .Where(e => e.NombreCompleto.ToUpper().Contains(busqueda.ToUpper().Trim()))
+                .ToList();
+
+            if (resultados.Count == 1)
+            {
+                // Un solo resultado: ir directo
+                estudiante = resultados.First();
+                var inscripciones = await _unitOfWork.Estudiantes.GetInscripcionesEstudianteAsync(estudiante.Id);
+                var pendientes = inscripciones.Where(i => !i.PagoRealizado && i.Estado == EstadoInscripcion.Activa).ToList();
+                ViewBag.Estudiante = estudiante;
+                ViewBag.Resultados = null;
+                return View("RegistrarPagoEstudiante", pendientes);
+            }
+            else if (resultados.Count > 1)
+            {
+                // Múltiples resultados: mostrar lista
+                ViewBag.Busqueda = busqueda;
+                ViewBag.Resultados = resultados;
+                ViewBag.Estudiante = null;
+                return View("SeleccionarEstudiante");
+            }
+
+            TempData["ErrorMessage"] = "No se encontro ningun estudiante con: " + busqueda;
+            return View();
+        }
+
+        // GET: /Empleado/SeleccionarEstudiantePago/{id}
+        [HttpGet]
+        public async Task<IActionResult> SeleccionarEstudiantePago(int id)
+        {
+            var estudiante = await _unitOfWork.Estudiantes.GetByIdAsync(id);
+            if (estudiante == null) return NotFound();
+
             var inscripciones = await _unitOfWork.Estudiantes.GetInscripcionesEstudianteAsync(estudiante.Id);
             var pendientes = inscripciones.Where(i => !i.PagoRealizado && i.Estado == EstadoInscripcion.Activa).ToList();
 
             ViewBag.Estudiante = estudiante;
+            ViewBag.Resultados = null;
             return View("RegistrarPagoEstudiante", pendientes);
         }
 
