@@ -72,10 +72,10 @@
                             }
                             @if (User.IsInRole("Empleado"))
                             {
+                                <li class="nav-item"><a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Estudiantes"><i class="bi bi-people"></i> Estudiantes</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Pagos"><i class="bi bi-cash-stack"></i> Pagos</a></li>
-                                <li class="nav-item"><a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Deudas"><i class="bi bi-exclamation-triangle"></i> Deudas</a></li>
                                 <li class="nav-item"><a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="BuscarEstudiantePago"><i class="bi bi-cash-stack"></i> Registrar Pago</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-area="Empleado" asp-controller="Empleado" asp-action="Deudas"><i class="bi bi-exclamation-triangle"></i> Deudas</a></li>
                             }
                         </ul>
                         <ul class="navbar-nav">
