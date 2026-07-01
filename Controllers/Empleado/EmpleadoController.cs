@@ -256,6 +256,89 @@ namespace SistemaGestionAcademica.Controllers.Empleado
             return View(inscripcionesPendientes);
         }
 
+        // GET: /Empleado/BuscarEstudiantePago
+        [HttpGet]
+        public IActionResult BuscarEstudiantePago()
+        {
+            return View();
+        }
+
+        // POST: /Empleado/BuscarEstudiantePago
+        [HttpPost]
+        public async Task<IActionResult> BuscarEstudiantePago(string ci)
+        {
+            if (string.IsNullOrEmpty(ci))
+            {
+                TempData["ErrorMessage"] = "Ingrese un CI para buscar.";
+                return View();
+            }
+
+            var estudiante = await _unitOfWork.Estudiantes.GetByCIAsync(ci);
+            if (estudiante == null)
+            {
+                TempData["ErrorMessage"] = "No se encontro ningun estudiante con CI: " + ci;
+                return View();
+            }
+
+            // Obtener inscripciones pendientes de pago
+            var inscripciones = await _unitOfWork.Estudiantes.GetInscripcionesEstudianteAsync(estudiante.Id);
+            var pendientes = inscripciones.Where(i => !i.PagoRealizado && i.Estado == EstadoInscripcion.Activa).ToList();
+
+            ViewBag.Estudiante = estudiante;
+            return View("RegistrarPagoEstudiante", pendientes);
+        }
+
+        // POST: /Empleado/ProcesarPago
+        [HttpPost]
+        public async Task<IActionResult> ProcesarPago(int inscripcionId, decimal monto, string concepto, int estudianteId)
+        {
+            try
+            {
+                var inscripcion = await _unitOfWork.Inscripciones.GetInscripcionConDetallesAsync(inscripcionId);
+                if (inscripcion == null)
+                {
+                    TempData["ErrorMessage"] = "Inscripcion no encontrada.";
+                    return RedirectToAction(nameof(BuscarEstudiantePago));
+                }
+
+                var userId = _userManager.GetUserId(User);
+
+                var pago = new Pago
+                {
+                    InscripcionId = inscripcionId,
+                    EstudianteId = estudianteId,
+                    Monto = monto,
+                    FechaPago = DateTime.UtcNow,
+                    Tipo = TipoPago.Materia,
+                    Concepto = concepto ?? "Pago de materia",
+                    RegistradoPorId = userId,
+                    Estado = EstadoPago.Completado
+                };
+
+                await _unitOfWork.Pagos.AddAsync(pago);
+                await _unitOfWork.CompleteAsync();
+
+                // Verificar si ya cubre el costo
+                var pagosRealizados = await _unitOfWork.Pagos.GetPagosPorInscripcionAsync(inscripcionId);
+                var totalPagado = pagosRealizados.Sum(p => p.Monto);
+
+                if (totalPagado >= inscripcion.Materia.Costo)
+                {
+                    inscripcion.PagoRealizado = true;
+                    await _unitOfWork.Inscripciones.UpdateAsync(inscripcion);
+                    await _unitOfWork.CompleteAsync();
+                }
+
+                TempData["SuccessMessage"] = "Pago registrado exitosamente. Total pagado: Bs. " + totalPagado.ToString("F2");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error al procesar pago: " + ex.Message;
+            }
+
+            return RedirectToAction(nameof(BuscarEstudiantePago));
+        }
+
         // POST: /Empleado/RegistrarInscripcion
         [HttpPost]
         
